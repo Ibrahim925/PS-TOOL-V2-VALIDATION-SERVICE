@@ -12,4 +12,8 @@ app.use(authenticateRefreshToken);
 
 const PORT = process.env.PORT || 5001;
 
+app.get("/", (req, res) => {
+	res.send("JFLDSJFLKDSJFKJ");
+});
+
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
