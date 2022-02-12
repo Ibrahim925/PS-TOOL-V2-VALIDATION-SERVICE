@@ -10,14 +10,12 @@ const validateColumns = async (
 	console.log("Validating columns");
 	const errors: Errors = [];
 	// Get rules
-	const rules = await connection
-		.getRepository(Rule)
-		.createQueryBuilder("rule")
-		.where(
-			"rule.ruleProject = :projectName AND rule.ruleObject = :objectName",
-			{ projectName, objectName }
-		)
-		.getMany();
+	const rules = await connection.getRepository(Rule).find({
+		where: {
+			ruleProject: projectName,
+			ruleObject: objectName,
+		},
+	});
 
 	const expectedFields = rules.map((rule) => {
 		return rule.ruleField;
