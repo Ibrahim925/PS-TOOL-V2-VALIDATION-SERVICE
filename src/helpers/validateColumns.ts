@@ -8,8 +8,7 @@ const validateColumns = async (
 	objectName: string
 ) => {
 	console.log("Validating columns");
-	console.log(projectName, objectName);
-	const errors: Errors = [];
+
 	// Get rules
 	const rules = await connection
 		.getRepository(Rule)
@@ -19,26 +18,19 @@ const validateColumns = async (
 		return rule.ruleField;
 	});
 
-	console.log(rules);
-	console.log(expectedFields);
-
 	const expectedNumberOfFields = expectedFields.length;
 
 	const fields = Object.keys(csvJSON[0]);
 
 	if (fields.length !== expectedNumberOfFields) {
-		errors.push({ message: "Please enter a valid rules spreadsheet!" });
+		return false;
 	}
 
 	for (let i = 0; i < expectedNumberOfFields; i++) {
-		if (fields[i] !== expectedFields[i]) {
-			errors.push({
-				message: "Please enter a valid rules spreadsheet!",
-			});
-		}
+		return false;
 	}
 
-	return errors.length === 0;
+	return true;
 };
 
 export default validateColumns;
