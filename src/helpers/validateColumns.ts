@@ -8,6 +8,7 @@ const validateColumns = async (
 	objectName: string
 ) => {
 	console.log("Validating columns");
+	console.log(projectName, objectName);
 	const errors: Errors = [];
 	// Get rules
 	const rules = await connection
