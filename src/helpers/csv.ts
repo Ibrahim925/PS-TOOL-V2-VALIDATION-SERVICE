@@ -1,5 +1,3 @@
-import { Rules } from "../types";
-
 const isStringNumeric = (str: string) => {
 	if (!str) return false;
 
