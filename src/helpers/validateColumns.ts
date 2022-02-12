@@ -1,18 +1,12 @@
 import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
-import { Errors } from "../types";
+import { Errors, Rules } from "../types";
 
 const validateColumns = async (
 	csvJSON: { [key: string]: any }[],
-	projectName: string,
-	objectName: string
+	rules: Rule[]
 ) => {
 	console.log("Validating columns");
-
-	// Get rules
-	const rules = await connection
-		.getRepository(Rule)
-		.find({ where: { ruleProject: projectName, ruleObject: objectName } });
 
 	const expectedFields = rules.map((rule) => {
 		return rule.ruleField;
