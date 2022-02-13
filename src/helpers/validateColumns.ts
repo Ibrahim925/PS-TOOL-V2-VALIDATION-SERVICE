@@ -12,11 +12,12 @@ const validateColumns = async (
 		return rule.ruleField;
 	});
 
-	console.log(expectedFields, csvJSON);
-
 	const expectedNumberOfFields = expectedFields.length;
 
 	const fields = Object.keys(csvJSON[0]);
+
+	console.log("-------------------------------", fields);
+	console.log("-------------------------------", expectedFields);
 
 	if (fields.length !== expectedNumberOfFields) {
 		return false;
