@@ -7,41 +7,99 @@ const validateData = async (
 	projectVersion: Versions
 ) => {
 	const fields: string[] = Object.keys(csvJSON[0]);
-
-	const errors = {
-		dataTypeErrors: [],
-		existenceErrors: [],
-		dependencyErrors: [],
-	};
+	let isErrors = false;
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
-		const row = csvJSON[i];
+		// Clean data
+		const newRow = cleanData(csvJSON[i], projectVersion, fields);
+		csvJSON[i] = newRow;
+		const row = newRow;
 
 		// Validate dependency
 
 		// Validate existence
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
-			errors.existenceErrors.push(...existenceErrors.payload.errors);
+			csvJSON[i].Error = existenceErrors.payload.errors[0].message;
+			csvJSON[i]["Row Number"] = i + 1;
+			isErrors = true;
 		}
 
 		// Validate Datatype
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
-			errors.dataTypeErrors.push(...dataTypeErrors.payload.errors);
+			csvJSON[i].Error = dataTypeErrors.payload.errors[0].message;
+			csvJSON[i]["Row Number"] = i + 1;
+			isErrors = true;
 		}
 	}
+
+	return { outputCsvJSON: csvJSON, isErrors };
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
+const cleanData = (row: any, projectVersion: Versions, fields: string[]) => {
+	for (let i = 0, len = fields.length; i < len; i++) {
+		const dataType = typeof row[fields[i]];
+		if (dataType === "string") {
+			row[fields[i]] = row[fields[i]].trim();
+
+			if (projectVersion === "V9") {
+				let newStr = "";
+				for (let i = 0, len = row[fields[i]].length; i < len; i++) {
+					const char: string = row[fields[i]][i];
+
+					switch (char) {
+						case "&":
+							newStr += "&amp;";
+							break;
+						case "<":
+							newStr += "&lt;";
+							break;
+						case ">":
+							newStr += "&gt;";
+							break;
+
+						case '"':
+							newStr += "&quot;";
+							break;
+						case "'":
+							newStr += "&apos;";
+							break;
+						case "/":
+							newStr += " ";
+							break;
+						default:
+							newStr += char;
+							break;
+					}
+				}
+
+				row[fields[i]] = newStr;
+			}
+		}
+	}
+
+	return row;
+};
 
 // Validate datatype
+const validateDateFormat = (date: string) => {
+	const dateArray = date.split("/");
+	if (dateArray.length !== 3) return false;
+
+	if (Number(date[0]) > 12 || Number(date[1]) > 31 || Number(date[2]) < 2000)
+		return false;
+
+	return true;
+};
+
 const validateDataType = (row, rules: Rule[], fields: string[]) => {
 	const errors: Errors = [];
 
 	for (const field of fields) {
 		const [rule] = rules.filter((rule) => rule.ruleField === field);
-		const data = rule[field];
+		const data = row[field];
 		const dataType = typeof data;
 
 		switch (rule.ruleDataType) {
@@ -70,7 +128,12 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 					});
 				break;
 			case DataTypes.DateTime:
-				// TODO: IMPLEMENT DATETIME IMPLEMENTATION
+				const isDateFormat = validateDateFormat(data);
+				if (!isDateFormat) {
+					errors.push({
+						message: `Please enter the date in MM/DD/YYYY format!`,
+					});
+				}
 				break;
 			default:
 				break;
@@ -86,7 +149,7 @@ const validateDataExistence = (row, rules: Rule[], fields: string[]) => {
 
 	for (const field of fields) {
 		const [rule] = rules.filter((rule) => rule.ruleField === field);
-		const data = rule[field];
+		const data = row[field];
 
 		if (!data && rule.ruleRequired)
 			errors.push({ message: `Expected a value in column ${field}` });

@@ -1,6 +1,6 @@
 import { CustomRequest, Errors } from "../types";
 import { Response } from "express";
-import { CSVToJSON } from "../helpers/csv";
+import { CSVToJSON, JSONtoCSV } from "../helpers/csv";
 import validateColumns from "../helpers/validateColumns";
 import validateData from "../helpers/validateData";
 import { Project } from "../db/entity/Project";
@@ -47,7 +47,18 @@ export const validate_data = async (
 	}
 
 	// Validate data
-	const validateDataOutput = await validateData(csvJSON, rules, projectVersion);
+	const { outputCsvJSON, isErrors } = await validateData(
+		csvJSON,
+		rules,
+		projectVersion
+	);
 
-	res.json("--->DATA GOES HEREEEE<-----");
+	// Create CSV with errors
+	if (isErrors) {
+		const csvText = await JSONtoCSV(outputCsvJSON);
+
+		return res.json({ csvText });
+	}
+
+	res.json("SUCCESS MESSAGE GOES HERE");
 };
