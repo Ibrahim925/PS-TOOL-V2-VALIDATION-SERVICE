@@ -1,4 +1,4 @@
-import { Parser } from "json2csv";
+import {} from "json2csv";
 
 const isStringNumeric = (str: string) => {
 	if (!str) return false;
@@ -55,9 +55,9 @@ export const JSONtoCSV = async (csvJSON: any[]) => {
 	const opts = { fields };
 
 	try {
-		const parser = new Parser(opts);
-		const csv = parser.parser(csvJSON);
-		return csv;
+		const csv = csvJSON.map((row) => Object.values(row));
+		csv.unshift(fields);
+		return csv.join("\n");
 	} catch (error) {
 		console.error(error);
 	}
