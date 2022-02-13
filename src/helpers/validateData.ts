@@ -99,33 +99,57 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 
 	for (const field of fields) {
 		const [rule] = rules.filter((rule) => rule.ruleField === field);
+		const ruleTypeArray = rule.ruleDataType.split("(");
+		let type = ruleTypeArray[0];
+		let length;
+		if (ruleTypeArray[0] === "STRING" || ruleTypeArray[0] === "NUMBER") {
+			length = Number(ruleTypeArray[1].split(")")[0]);
+		}
 		const data = row[field];
 		const dataType = typeof data;
 
-		switch (rule.ruleDataType) {
+		switch (type) {
 			case DataTypes.Boolean:
-				if (dataType !== "boolean")
+				if (dataType !== "boolean") {
 					errors.push({
 						message: `Expected ${DataTypes.Boolean}, got ${dataType}`,
 					});
+					continue;
+				}
 				break;
 			case DataTypes.Char:
-				if (dataType !== "string" && dataType.length !== 1)
+				if (dataType !== "string" && dataType.length !== 1) {
 					errors.push({
 						message: `Expected ${DataTypes.Char}, got ${dataType}`,
 					});
+					continue;
+				}
 				break;
 			case DataTypes.Integer:
-				if (dataType !== "number")
+				if (dataType !== "number") {
 					errors.push({
 						message: `Expected ${DataTypes.Integer}, got ${dataType}`,
 					});
+					continue;
+				}
+				if (data > length) {
+					errors.push({
+						message: `Integer must be less than or equal to ${length}`,
+					});
+				}
 				break;
 			case DataTypes.String:
-				if (dataType !== "string")
+				if (dataType !== "string") {
 					errors.push({
 						message: `Expected ${DataTypes.String}, got ${dataType}`,
 					});
+					continue;
+				}
+				if (data.length > length) {
+					errors.push({
+						message: `String must be less than ${length + 1} characters long`,
+					});
+				}
 				break;
 			case DataTypes.DateTime:
 				const isDateFormat = validateDateFormat(data);
