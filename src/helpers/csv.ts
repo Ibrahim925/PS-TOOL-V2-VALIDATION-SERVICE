@@ -50,9 +50,6 @@ export const CSVToJSON = async (
 
 export const JSONtoCSV = async (csvJSON: any[]) => {
 	const fields = Object.keys(csvJSON[0]);
-	if (!fields.includes("Error")) fields.push(...["Error", "Row Number"]);
-
-	const opts = { fields };
 
 	try {
 		const csv = csvJSON.map((row) => Object.values(row));

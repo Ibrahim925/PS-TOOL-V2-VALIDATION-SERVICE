@@ -12,6 +12,8 @@ const validateData = async (
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
 		// Clean data
 		const newRow = cleanData(csvJSON[i], projectVersion, fields);
+		newRow.Error = "";
+		newRow["Row Number"] = i + 1;
 		csvJSON[i] = newRow;
 		const row = newRow;
 
@@ -21,7 +23,6 @@ const validateData = async (
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
 			csvJSON[i].Error = existenceErrors.payload.errors[0].message;
-			csvJSON[i]["Row Number"] = i + 1;
 			isErrors = true;
 		}
 
@@ -29,7 +30,6 @@ const validateData = async (
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
 			csvJSON[i].Error = dataTypeErrors.payload.errors[0].message;
-			csvJSON[i]["Row Number"] = i + 1;
 			isErrors = true;
 		}
 	}
@@ -108,13 +108,11 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 		const data = row[field];
 		const dataType = typeof data;
 
-		console.log(rule);
-
 		switch (type) {
 			case DataTypes.Boolean:
 				if (dataType !== "boolean") {
 					errors.push({
-						message: `Expected ${DataTypes.Boolean}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.Boolean}, got ${dataType}`,
 					});
 					continue;
 				}
@@ -122,7 +120,7 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 			case DataTypes.Char:
 				if (dataType !== "string" && dataType.length !== 1) {
 					errors.push({
-						message: `Expected ${DataTypes.Char}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.Char}, got ${dataType}`,
 					});
 					continue;
 				}
@@ -130,26 +128,28 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 			case DataTypes.Integer:
 				if (dataType !== "number") {
 					errors.push({
-						message: `Expected ${DataTypes.Integer}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.Integer}, got ${dataType}`,
 					});
 					continue;
 				}
 				if (data > length) {
 					errors.push({
-						message: `Integer must be less than or equal to ${length}`,
+						message: `${field}: Integer must be less than or equal to ${length}`,
 					});
 				}
 				break;
 			case DataTypes.String:
 				if (dataType !== "string") {
 					errors.push({
-						message: `Expected ${DataTypes.String}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.String}, got ${dataType}`,
 					});
 					continue;
 				}
 				if (data.length > length) {
 					errors.push({
-						message: `String must be less than ${length + 1} characters long`,
+						message: `${field}: String must be less than ${
+							length + 1
+						} characters long`,
 					});
 				}
 				break;
@@ -157,7 +157,7 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 				const isDateFormat = validateDateFormat(data);
 				if (!isDateFormat) {
 					errors.push({
-						message: `Please enter the date in MM/DD/YYYY format!`,
+						message: `${field}: Please enter the date in MM/DD/YYYY format!`,
 					});
 				}
 				break;
@@ -178,7 +178,7 @@ const validateDataExistence = (row, rules: Rule[], fields: string[]) => {
 		const data = row[field];
 
 		if (!data && rule.ruleRequired)
-			errors.push({ message: `Expected a value in column ${field}` });
+			errors.push({ message: `${field}: Expected a value in column ${field}` });
 	}
 
 	return { errorCount: errors.length, payload: { errors } };
