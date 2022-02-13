@@ -26,6 +26,8 @@ export const validate_data = async (
 		},
 	});
 
+	console.log(csvText);
+
 	const rules = await connection.getRepository(Rule).find({
 		where: {
 			ruleProject: projectName,
