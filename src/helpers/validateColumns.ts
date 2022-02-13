@@ -24,7 +24,7 @@ const validateColumns = async (
 	}
 
 	for (let i = 0; i < expectedNumberOfFields; i++) {
-		return false;
+		if (fields[i] !== expectedFields[i]) return false;
 	}
 
 	return true;
