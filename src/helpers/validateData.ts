@@ -108,6 +108,8 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 		const data = row[field];
 		const dataType = typeof data;
 
+		console.log(rule);
+
 		switch (type) {
 			case DataTypes.Boolean:
 				if (dataType !== "boolean") {
