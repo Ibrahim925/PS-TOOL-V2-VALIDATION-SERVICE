@@ -52,9 +52,8 @@ export const JSONtoCSV = async (csvJSON: any[]) => {
 	const fields = Object.keys(csvJSON[0]);
 
 	try {
-		const csv = csvJSON.map((row) =>
-			Object.values(row).map((value: any) => value.replace('"', ""))
-		);
+		const csv = csvJSON.map((row) => Object.values(row));
+		console;
 		csv.unshift(fields);
 
 		console.log(csv);
