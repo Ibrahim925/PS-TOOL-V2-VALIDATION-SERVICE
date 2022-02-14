@@ -29,7 +29,7 @@ const validateData = async (
 		// Validate Datatype
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
-			csvJSON[i].Error += dataTypeErrors.payload.errors[0].message + "\n";
+			csvJSON[i].Error += `\"${dataTypeErrors.payload.errors[0].message}\n\"`;
 			isErrors = true;
 		}
 	}
