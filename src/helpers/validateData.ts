@@ -22,7 +22,7 @@ const validateData = async (
 		// Validate existence
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
-			csvJSON[i].Error += existenceErrors.payload.errors[0].message + "\n";
+			csvJSON[i].Error += `\"${existenceErrors.payload.errors[0].message}\n\"`;
 			isErrors = true;
 		}
 
