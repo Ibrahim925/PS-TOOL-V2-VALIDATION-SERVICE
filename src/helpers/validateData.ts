@@ -26,13 +26,15 @@ const validateData = async (
 		// Validate existence
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
-			if (!csvJSON[i].Error) {
-				csvJSON[i].Error = `${existenceErrors.payload.errors[0].message}`;
-			} else {
-				csvJSON.splice(i, 0, {
-					...csvJSON[i],
-					Error: `${existenceErrors.payload.errors[0].message}`,
-				});
+			for (const error of existenceErrors.payload.errors) {
+				if (!csvJSON[i].Error) {
+					csvJSON[i].Error = `${error.message}`;
+				} else {
+					csvJSON.splice(i, 0, {
+						...csvJSON[i],
+						Error: `${error.message}`,
+					});
+				}
 			}
 
 			errorCount += existenceErrors.errorCount;
@@ -41,13 +43,15 @@ const validateData = async (
 		// Validate Datatype
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
-			if (!csvJSON[i].Error) {
-				csvJSON[i].Error = `${dataTypeErrors.payload.errors[0].message}`;
-			} else {
-				csvJSON.splice(i, 0, {
-					...csvJSON[i],
-					Error: `${dataTypeErrors.payload.errors[0].message}`,
-				});
+			for (const error of dataTypeErrors.payload.errors) {
+				if (!csvJSON[i].Error) {
+					csvJSON[i].Error = `${error.message}`;
+				} else {
+					csvJSON.splice(i, 0, {
+						...csvJSON[i],
+						Error: `${error.message}`,
+					});
+				}
 			}
 
 			errorCount += dataTypeErrors.errorCount;
