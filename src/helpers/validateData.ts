@@ -30,7 +30,7 @@ const validateData = async (
 				csvJSON[i].Error = `${existenceErrors.payload.errors[0].message}`;
 			} else {
 				csvJSON.splice(i, 0, {
-					...csvJSON,
+					...csvJSON[i],
 					Error: `${existenceErrors.payload.errors[0].message}`,
 				});
 			}
@@ -45,7 +45,7 @@ const validateData = async (
 				csvJSON[i].Error = `${dataTypeErrors.payload.errors[0].message}`;
 			} else {
 				csvJSON.splice(i, 0, {
-					...csvJSON,
+					...csvJSON[i],
 					Error: `${dataTypeErrors.payload.errors[0].message}`,
 				});
 			}
