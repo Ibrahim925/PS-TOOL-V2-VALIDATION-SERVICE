@@ -11,13 +11,13 @@ const validateData = async (
 	projectVersion: Versions
 ) => {
 	const fields: string[] = Object.keys(csvJSON[0]);
+	const outputCSV = [];
 	let errorCount = 0;
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
 		// Clean data
 		const newRow = cleanData(csvJSON[i], projectVersion, fields);
-		newRow.Error = "";
-		newRow["Row Number"] = i + 1;
+		const rowNumber = i + 1;
 		csvJSON[i] = newRow;
 		const row = newRow;
 
@@ -27,15 +27,11 @@ const validateData = async (
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
 			for (const error of existenceErrors.payload.errors) {
-				console.log(JSON.stringify(error));
-				if (!csvJSON[i].Error) {
-					csvJSON[i].Error = `${error.message}`;
-				} else {
-					csvJSON.splice(i, 0, {
-						...csvJSON[i],
-						Error: `${error.message}`,
-					});
-				}
+				outputCSV.push({
+					...csvJSON[i],
+					Error: error.message,
+					"Row Number": rowNumber,
+				});
 			}
 
 			errorCount += existenceErrors.errorCount;
@@ -45,22 +41,18 @@ const validateData = async (
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
 			for (const error of dataTypeErrors.payload.errors) {
-				console.log(JSON.stringify(error));
-				if (!csvJSON[i].Error) {
-					csvJSON[i].Error = `${error.message}`;
-				} else {
-					csvJSON.splice(i, 0, {
-						...csvJSON[i],
-						Error: `${error.message}`,
-					});
-				}
+				outputCSV.push({
+					...csvJSON[i],
+					Error: error.message,
+					"Row Number": rowNumber,
+				});
 			}
 
 			errorCount += dataTypeErrors.errorCount;
 		}
 	}
 
-	return { outputCsvJSON: csvJSON, errorCount };
+	return { outputCsvJSON: outputCSV, errorCount };
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
