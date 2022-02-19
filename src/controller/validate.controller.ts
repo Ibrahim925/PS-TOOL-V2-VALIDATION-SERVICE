@@ -59,7 +59,18 @@ export const validate_data = async (
 	if (isErrors) {
 		const csvText = await JSONtoCSV(outputCsvJSON);
 
-		return res.json({ csvText });
+		const date = new Date();
+		const dd = String(date.getDate()).padStart(2, "0");
+		const mm = String(date.getMonth() + 1).padStart(2, "0");
+		const yyyy = date.getFullYear();
+		const day = mm + "-" + dd + "-" + yyyy;
+
+		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
+
+		return res.json({
+			csvText,
+			path: `${rules[0].ruleObject} Output - ${day}.csv`,
+		});
 	}
 
 	res.json("SUCCESS MESSAGE GOES HERE");
