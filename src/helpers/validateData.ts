@@ -67,6 +67,7 @@ const cleanData = (row: any, projectVersion: Versions, fields: string[]) => {
 			if (projectVersion === "V9") {
 				let newStr = "";
 				for (let i = 0, len = row[fields[i]].length; i < len; i++) {
+					console.log(i);
 					const char: string = row[fields[i]][i];
 
 					switch (char) {
