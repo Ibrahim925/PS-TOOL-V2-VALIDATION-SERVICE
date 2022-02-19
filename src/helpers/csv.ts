@@ -56,8 +56,6 @@ export const JSONtoCSV = async (csvJSON: any[]) => {
 		console;
 		csv.unshift(fields);
 
-		console.log(csv);
-
 		return csv.join("\n");
 	} catch (error) {
 		console.error(error);

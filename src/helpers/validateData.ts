@@ -1,6 +1,10 @@
 import { DataTypes, Errors, Versions } from "../types";
 import { Rule } from "../db/entity/Rule";
 
+// TODO:
+// set up dependency checks
+// change put each error on a different line
+
 const validateData = async (
 	csvJSON: { [key: string]: any }[],
 	rules: Rule[],
