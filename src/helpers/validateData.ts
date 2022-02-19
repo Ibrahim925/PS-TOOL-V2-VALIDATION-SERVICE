@@ -11,7 +11,7 @@ const validateData = async (
 	projectVersion: Versions
 ) => {
 	const fields: string[] = Object.keys(csvJSON[0]);
-	let isErrors = false;
+	let errorCount = 0;
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
 		// Clean data
@@ -35,7 +35,7 @@ const validateData = async (
 				});
 			}
 
-			isErrors = true;
+			errorCount += existenceErrors.errorCount;
 		}
 
 		// Validate Datatype
@@ -50,11 +50,11 @@ const validateData = async (
 				});
 			}
 
-			isErrors = true;
+			errorCount += dataTypeErrors.errorCount;
 		}
 	}
 
-	return { outputCsvJSON: csvJSON, isErrors };
+	return { outputCsvJSON: csvJSON, errorCount };
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)

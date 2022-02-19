@@ -49,14 +49,14 @@ export const validate_data = async (
 	}
 
 	// Validate data
-	const { outputCsvJSON, isErrors } = await validateData(
+	const { outputCsvJSON, errorCount } = await validateData(
 		csvJSON,
 		rules,
 		projectVersion
 	);
 
 	// Create CSV with errors
-	if (isErrors) {
+	if (errorCount) {
 		const csvText = await JSONtoCSV(outputCsvJSON);
 
 		const date = new Date();
@@ -70,6 +70,7 @@ export const validate_data = async (
 		return res.json({
 			csvText,
 			path: `${rules[0].ruleObject} Output - ${day}.csv`,
+			errorCount,
 		});
 	}
 
