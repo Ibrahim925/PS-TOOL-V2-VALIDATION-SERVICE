@@ -27,6 +27,7 @@ const validateData = async (
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
 			for (const error of existenceErrors.payload.errors) {
+				console.log(JSON.stringify(error));
 				if (!csvJSON[i].Error) {
 					csvJSON[i].Error = `${error.message}`;
 				} else {
@@ -44,6 +45,7 @@ const validateData = async (
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
 			for (const error of dataTypeErrors.payload.errors) {
+				console.log(JSON.stringify(error));
 				if (!csvJSON[i].Error) {
 					csvJSON[i].Error = `${error.message}`;
 				} else {
