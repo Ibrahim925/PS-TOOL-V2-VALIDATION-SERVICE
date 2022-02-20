@@ -8,13 +8,13 @@ export const createNotification = async (
 ) => {
 	// Create the date
 
-	const day = getDay();
-	const time = getTime();
+	const notificationDate = getDay();
+	const notificationTime = getTime();
 
 	try {
 		await Notification.insert({
-			notificationDate: day,
-			notificationTime: time,
+			notificationDate,
+			notificationTime,
 			notificationText,
 			notificationObject,
 			notificationProject,
