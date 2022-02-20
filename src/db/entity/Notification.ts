@@ -13,7 +13,7 @@ export class Notification extends BaseEntity {
 	id: number;
 
 	@Column()
-	notificationDate: Date;
+	notificationDate: string;
 
 	@Column()
 	notificationTime: string;
