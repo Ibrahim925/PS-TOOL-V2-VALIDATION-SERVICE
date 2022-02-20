@@ -78,6 +78,12 @@ export const validate_data = async (
 			path: `${rules[0].ruleObject} Output - ${day}.csv`,
 			errorCount,
 		});
+	} else {
+		await createNotification(
+			`${projectName} successfully uploaded ${objectName} with no errors!`,
+			projectName,
+			objectName
+		);
 	}
 
 	res.json("SUCCESS MESSAGE GOES HERE");
