@@ -6,6 +6,8 @@ import validateData from "../helpers/validateData";
 import { Project } from "../db/entity/Project";
 import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
+import { createNotification } from "../helpers/notificationHandler";
+import { getDay } from "../helpers/getNow";
 
 interface ValidateDataBody {
 	csvText: string;
@@ -59,14 +61,18 @@ export const validate_data = async (
 	if (errorCount) {
 		const csvText = await JSONtoCSV(outputCsvJSON);
 
-		const date = new Date();
-		const dd = String(date.getDate()).padStart(2, "0");
-		const mm = String(date.getMonth() + 1).padStart(2, "0");
-		const yyyy = date.getFullYear();
-		const day = mm + "-" + dd + "-" + yyyy;
+		const day = getDay();
+
+		// Create notification
+		await createNotification(
+			`${projectName} uploaded ${objectName} with ${errorCount} error${
+				errorCount > 1 ? "s" : ""
+			}`,
+			projectName,
+			objectName
+		);
 
 		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
-
 		return res.json({
 			csvText,
 			path: `${rules[0].ruleObject} Output - ${day}.csv`,
