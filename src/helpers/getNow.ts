@@ -5,10 +5,6 @@ export const getDay = () => {
 	const y = date.getFullYear();
 	const day = m + "-" + d + "-" + y;
 
-	console.log(y);
-	console.log(m);
-	console.log(d);
-
 	return day;
 };
 
