@@ -40,6 +40,9 @@ export class Rule extends BaseEntity {
 	@Column()
 	ruleDependency: string;
 
+	@Column()
+	ruleObjectIsParent: boolean;
+
 	@CreateDateColumn()
 	createdAt: Date;
 
