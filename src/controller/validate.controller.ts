@@ -100,7 +100,7 @@ export const validate_data = async (
 		);
 
 		return res.json({
-			errorCount,
+			success: true,
 			payload: {
 				csvText,
 				path: `${rules[0].ruleObject}.csv`,
