@@ -47,14 +47,16 @@ export const validate_data = async (
 
 	if (!isColumnsValid) {
 		errors.push({ message: "Please enter a sheet with the correct fields" });
+
 		await createNotification(
 			`${projectName} uploaded ${objectName} with incorrect fields`,
 			projectName,
 			objectName
 		);
+
 		return res.json({
-			errorCount: 1,
-			payload: { errors, incorrectFields: true },
+			payload: { errors },
+			incorrectFields: true,
 		});
 	}
 
