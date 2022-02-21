@@ -61,7 +61,7 @@ export const validate_data = async (
 	}
 
 	// Validate data
-	const { outputCsvJSON, errorCount } = await validateData(
+	const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
 		csvJSON,
 		rules,
 		projectVersion
@@ -91,12 +91,20 @@ export const validate_data = async (
 			errorCount,
 		});
 	} else {
+		const csvText = await JSONtoCSV(exportCsvJSON);
+
 		await createNotification(
 			`${projectName} successfully uploaded ${objectName} with no errors!`,
 			projectName,
 			objectName
 		);
-	}
 
-	res.json("SUCCESS MESSAGE GOES HERE");
+		return res.json({
+			errorCount,
+			payload: {
+				csvText,
+				path: `${rules[0].ruleObject}.csv`,
+			},
+		});
+	}
 };

@@ -52,7 +52,7 @@ const validateData = async (
 		}
 	}
 
-	return { outputCsvJSON: outputCSV, errorCount };
+	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
