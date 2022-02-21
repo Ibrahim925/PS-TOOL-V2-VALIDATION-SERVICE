@@ -82,8 +82,10 @@ export const validate_data = async (
 
 		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
 		return res.json({
-			csvText,
-			path: `${rules[0].ruleObject} Output - ${day}.csv`,
+			payload: {
+				csvText,
+				path: `${rules[0].ruleObject} Output - ${day}.csv`,
+			},
 			errorCount,
 		});
 	} else {
