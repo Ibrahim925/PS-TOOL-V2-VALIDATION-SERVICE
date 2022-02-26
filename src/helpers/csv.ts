@@ -55,9 +55,15 @@ export const CSVToJSON = async (
 			console.log(rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]);
 			console.log(title);
 			console.log("----------");
+
+			return (
+				rule.ruleField === title &&
+				rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
+			);
 		});
 
 		// Get object Occurrence
+		console.log("FJSDKFHJKDSFJKSD", rule, "FJLDKSFJKLSDKF");
 
 		// titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 	}
