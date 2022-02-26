@@ -34,6 +34,13 @@ export const CSVToJSON = async (
 
 	const fieldOccurrenceTracker = {};
 
+	const rules = await connection.getRepository(Rule).find({
+		where: {
+			ruleObject: objectName,
+			ruleProject: projectName,
+		},
+	});
+
 	for await (const title of titlesWithoutOccurrence) {
 		if (fieldOccurrenceTracker[title] === undefined) {
 			fieldOccurrenceTracker[title] = 0;
@@ -41,16 +48,13 @@ export const CSVToJSON = async (
 			fieldOccurrenceTracker[title] += 1;
 		}
 
+		const [rule] = rules.filter(
+			(rule) =>
+				rule.ruleField === title &&
+				rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
+		);
+
 		// Get object Occurrence
-		const [rule] = await connection.getRepository(Rule).find({
-			where: {
-				ruleObject: objectName,
-				ruleProject: projectName,
-				ruleField: title,
-				ruleFieldOccurrence: fieldOccurrenceTracker[title],
-			},
-			take: 1,
-		});
 
 		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 	}
