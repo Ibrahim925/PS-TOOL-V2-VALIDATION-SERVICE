@@ -123,6 +123,9 @@ const cleanData = (row: any, projectVersion: Versions, fields: Field[]) => {
 // Validate datatype
 const validateDateFormat = (date: string) => {
 	const dateArray = date.split("/");
+
+	console.log(dateArray);
+
 	if (dateArray.length !== 3) return false;
 
 	if (Number(date[0]) > 12 || Number(date[1]) > 31 || Number(date[2]) < 2000)
