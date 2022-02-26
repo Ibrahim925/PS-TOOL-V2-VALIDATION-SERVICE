@@ -9,7 +9,7 @@ const validateColumns = async (
 	console.log("Validating columns");
 
 	const expectedFields = rules.map((rule) => {
-		return rule.ruleField;
+		return `${rule.ruleField}~${rule.ruleFieldOccurrence}`;
 	});
 
 	const expectedNumberOfFields = expectedFields.length;
