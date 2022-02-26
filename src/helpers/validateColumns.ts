@@ -16,6 +16,10 @@ const validateColumns = async (
 
 	const fields = Object.keys(csvJSON[0]);
 
+	console.log(fields);
+	console.log("-----");
+	console.log(expectedFields);
+
 	if (fields.length !== expectedNumberOfFields) {
 		return false;
 	}
