@@ -196,7 +196,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				break;
 			case DataTypes.DateTime:
 				const isDateFormat = validateDateFormat(data);
-				if (isDateFormat) {
+				if (!isDateFormat) {
 					errors.push({
 						message: `${field}: Please enter the date in MM/DD/YYYY format`,
 					});
