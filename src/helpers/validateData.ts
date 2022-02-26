@@ -150,11 +150,11 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			length = Number(ruleTypeArray[1].split(")")[0]);
 		}
 		const data = row[fullField];
-		const dataType = typeof data;
+		const dataType = (typeof data).toUpperCase();
 
 		switch (type) {
 			case DataTypes.Boolean:
-				if (dataType !== "boolean") {
+				if (dataType !== "BOOLEAN") {
 					errors.push({
 						message: `${field}: Expected ${DataTypes.Boolean} but got ${dataType}`,
 					});
@@ -162,7 +162,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				}
 				break;
 			case DataTypes.Char:
-				if (dataType !== "string" && dataType.length !== 1) {
+				if (dataType !== "STRING" && dataType.length !== 1) {
 					errors.push({
 						message: `${field}: Expected ${DataTypes.Char} but got ${dataType}`,
 					});
@@ -170,7 +170,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				}
 				break;
 			case DataTypes.Integer:
-				if (dataType !== "number") {
+				if (dataType !== "NUMBER") {
 					errors.push({
 						message: `${field}: Expected ${DataTypes.Integer} but got ${dataType}`,
 					});
@@ -178,12 +178,12 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				}
 				if (data > length) {
 					errors.push({
-						message: `${field}: Integer must be less than or equal to ${length}`,
+						message: `${field}: INTEGER must be less than or equal to ${length}`,
 					});
 				}
 				break;
 			case DataTypes.String:
-				if (dataType !== "string") {
+				if (dataType !== "STRING") {
 					errors.push({
 						message: `${field}: Expected ${DataTypes.String} but got ${dataType}`,
 					});
@@ -191,7 +191,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				}
 				if (data.length > length) {
 					errors.push({
-						message: `${field}: String must be less than ${
+						message: `${field}: STRING must be less than ${
 							length + 1
 						} characters long`,
 					});
@@ -201,7 +201,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				const isDateFormat = validateDateFormat(data);
 				if (!isDateFormat) {
 					errors.push({
-						message: `${field}: Please enter the date in MM/DD/YYYY format!`,
+						message: `${field}: Please enter the date in MM/DD/YYYY format`,
 					});
 				}
 				break;
