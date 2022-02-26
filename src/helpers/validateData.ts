@@ -156,7 +156,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			case DataTypes.Boolean:
 				if (dataType !== "boolean") {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.Boolean}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.Boolean} but got ${dataType}`,
 					});
 					continue;
 				}
@@ -164,7 +164,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			case DataTypes.Char:
 				if (dataType !== "string" && dataType.length !== 1) {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.Char}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.Char} but got ${dataType}`,
 					});
 					continue;
 				}
@@ -172,7 +172,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			case DataTypes.Integer:
 				if (dataType !== "number") {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.Integer}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.Integer} but got ${dataType}`,
 					});
 					continue;
 				}
@@ -185,7 +185,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			case DataTypes.String:
 				if (dataType !== "string") {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.String}, got ${dataType}`,
+						message: `${field}: Expected ${DataTypes.String} but got ${dataType}`,
 					});
 					continue;
 				}
