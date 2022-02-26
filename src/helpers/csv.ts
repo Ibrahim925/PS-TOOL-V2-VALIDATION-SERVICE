@@ -48,11 +48,14 @@ export const CSVToJSON = async (
 			fieldOccurrenceTracker[title] += 1;
 		}
 
-		const [rule] = rules.filter(
-			(rule) =>
-				rule.ruleField === title &&
-				rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
-		);
+		const [rule] = rules.filter((rule) => {
+			if (rule.ruleField)
+				return (
+					rule.ruleField === title &&
+					rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
+				);
+			return false;
+		});
 
 		// Get object Occurrence
 
