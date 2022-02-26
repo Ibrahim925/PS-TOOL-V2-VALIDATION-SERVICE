@@ -1,4 +1,3 @@
-import {} from "json2csv";
 import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
 
@@ -35,7 +34,7 @@ export const CSVToJSON = async (
 
 	for await (const title of titlesWithoutOccurrence) {
 		// Get object Occurrence
-		const [rule] = await connection.getRepository(Rule).find({
+		const rule = await connection.getRepository(Rule).find({
 			where: {
 				ruleObject: objectName,
 				ruleProject: projectName,
@@ -43,7 +42,10 @@ export const CSVToJSON = async (
 			},
 			take: 1,
 		});
-		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+
+		console.log(rule);
+
+		// titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 	}
 
 	return data
