@@ -32,20 +32,27 @@ export const CSVToJSON = async (
 
 	const titles = [];
 
+	const fieldOccurrenceTracker = {};
+
 	for await (const title of titlesWithoutOccurrence) {
+		if (fieldOccurrenceTracker[title] === undefined) {
+			fieldOccurrenceTracker[title] = 0;
+		} else {
+			fieldOccurrenceTracker[title] += 1;
+		}
+
 		// Get object Occurrence
-		const rule = await connection.getRepository(Rule).find({
+		const [rule] = await connection.getRepository(Rule).find({
 			where: {
 				ruleObject: objectName,
 				ruleProject: projectName,
 				ruleField: title,
+				ruleFieldOccurrence: fieldOccurrenceTracker[title],
 			},
 			take: 1,
 		});
 
-		console.log(rule);
-
-		// titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 	}
 
 	return data
