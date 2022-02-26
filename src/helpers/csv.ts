@@ -1,4 +1,5 @@
 import {} from "json2csv";
+import { Rule } from "../db/entity/Rule";
 
 const isStringNumeric = (str: string) => {
 	if (!str) return false;
@@ -19,13 +20,29 @@ const stringToBool = (str: string) => {
 
 export const CSVToJSON = async (
 	data: string,
+	projectName,
+	objectName,
 	delimiter = ","
 ): Promise<any> => {
 	// Extracts headers from CSV string
-	let titles = data
+	const titlesWithoutOccurrence = data
 		.slice(0, data.indexOf("\n"))
 		.split(delimiter)
 		.map((title) => title.split("\r")[0]);
+
+	const titles = [];
+
+	for await (const title of titlesWithoutOccurrence) {
+		// Get object Occurrence
+		const [rule] = await Rule.find({
+			where: {
+				ruleObject: objectName,
+				ruleProject: projectName,
+				ruleField: title,
+			},
+		});
+		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+	}
 
 	return data
 		.slice(data.indexOf("\n") + 1)

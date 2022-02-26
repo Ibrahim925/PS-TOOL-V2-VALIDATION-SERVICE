@@ -40,7 +40,7 @@ export const validate_data = async (
 	const errors: Errors = [];
 
 	console.log("Converting CSV to JSON");
-	const csvJSON = await CSVToJSON(csvText);
+	const csvJSON = await CSVToJSON(csvText, projectName, objectName);
 
 	// Validate columns
 	const isColumnsValid = await validateColumns(csvJSON, rules);

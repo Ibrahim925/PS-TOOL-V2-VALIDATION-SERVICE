@@ -26,7 +26,7 @@ export class Rule extends BaseEntity {
 	ruleField: string;
 
 	@Column()
-	ruleFieldOccurance: number;
+	ruleFieldOccurrence: number;
 
 	@Column()
 	ruleDataType: DataTypes;

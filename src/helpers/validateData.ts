@@ -5,12 +5,29 @@ import { Rule } from "../db/entity/Rule";
 // set up dependency checks
 // change put each error on a different line
 
+interface Field {
+	field: string;
+	occurrence: number;
+	fullField: string;
+}
+[];
+
 const validateData = async (
 	csvJSON: { [key: string]: any }[],
 	rules: Rule[],
 	projectVersion: Versions
 ) => {
-	const fields: string[] = Object.keys(csvJSON[0]);
+	const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
+		const arr = fullField.split("~");
+		const field = arr[0];
+		const occurrence = Number(arr[1]);
+
+		return {
+			field,
+			occurrence,
+			fullField,
+		};
+	});
 	const outputCSV = [];
 	let errorCount = 0;
 
@@ -56,16 +73,18 @@ const validateData = async (
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
-const cleanData = (row: any, projectVersion: Versions, fields: string[]) => {
+const cleanData = (row: any, projectVersion: Versions, fields: Field[]) => {
 	for (let i = 0, len = fields.length; i < len; i++) {
-		const dataType = typeof row[fields[i]];
+		let { field, occurrence, fullField } = fields[i];
+
+		const dataType = typeof row[fullField];
 		if (dataType === "string") {
-			row[fields[i]] = row[fields[i]].trim();
+			row[fullField] = row[fullField].trim();
 
 			if (projectVersion === "V9") {
 				let newStr = "";
-				for (let j = 0, len = row[fields[i]].length; j < len; j++) {
-					const char: string = row[fields[i]][j];
+				for (let j = 0, len = row[fullField].length; j < len; j++) {
+					const char: string = row[fullField][j];
 
 					switch (char) {
 						case "&":
@@ -93,7 +112,7 @@ const cleanData = (row: any, projectVersion: Versions, fields: string[]) => {
 					}
 				}
 
-				row[fields[i]] = newStr;
+				row[fullField] = newStr;
 			}
 		}
 	}
@@ -112,18 +131,22 @@ const validateDateFormat = (date: string) => {
 	return true;
 };
 
-const validateDataType = (row, rules: Rule[], fields: string[]) => {
+const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 	const errors: Errors = [];
 
-	for (const field of fields) {
-		const [rule] = rules.filter((rule) => rule.ruleField === field);
+	for (let { field, occurrence, fullField } of fields) {
+		const [rule] = rules.filter(
+			(rule) =>
+				rule.ruleField === field && rule.ruleFieldOccurrence === occurrence
+		);
+
 		const ruleTypeArray = rule.ruleDataType.split("(");
 		let type = ruleTypeArray[0];
 		let length;
 		if (ruleTypeArray[0] === "STRING" || ruleTypeArray[0] === "NUMBER") {
 			length = Number(ruleTypeArray[1].split(")")[0]);
 		}
-		const data = row[field];
+		const data = row[fullField];
 		const dataType = typeof data;
 
 		switch (type) {
@@ -188,12 +211,15 @@ const validateDataType = (row, rules: Rule[], fields: string[]) => {
 };
 
 // Validate existence
-const validateDataExistence = (row, rules: Rule[], fields: string[]) => {
+const validateDataExistence = (row, rules: Rule[], fields: Field[]) => {
 	const errors: Errors = [];
 
-	for (const field of fields) {
-		const [rule] = rules.filter((rule) => rule.ruleField === field);
-		const data = row[field];
+	for (const { field, occurrence, fullField } of fields) {
+		const [rule] = rules.filter(
+			(rule) =>
+				rule.ruleField === field && rule.ruleFieldOccurrence === occurrence
+		);
+		const data = row[fullField];
 
 		if (!data && rule.ruleRequired)
 			errors.push({ message: `${field}: Expected a value in column ${field}` });
