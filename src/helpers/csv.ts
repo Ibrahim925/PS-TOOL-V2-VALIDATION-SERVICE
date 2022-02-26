@@ -60,7 +60,7 @@ export const CSVToJSON = async (
 
 		// Get object Occurrence
 
-		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+		// titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 	}
 
 	return data
