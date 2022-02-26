@@ -1,4 +1,5 @@
 import {} from "json2csv";
+import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
 
 const isStringNumeric = (str: string) => {
@@ -34,12 +35,13 @@ export const CSVToJSON = async (
 
 	for await (const title of titlesWithoutOccurrence) {
 		// Get object Occurrence
-		const [rule] = await Rule.find({
+		const [rule] = await connection.getRepository(Rule).find({
 			where: {
 				ruleObject: objectName,
 				ruleProject: projectName,
 				ruleField: title,
 			},
+			take: 1,
 		});
 		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 	}
