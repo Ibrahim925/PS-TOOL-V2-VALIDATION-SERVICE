@@ -49,13 +49,6 @@ export const CSVToJSON = async (
 		}
 
 		const [rule] = rules.filter((rule) => {
-			console.log("-----------");
-			console.log(rule);
-			console.log(rule.ruleField === title);
-			console.log(rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]);
-			console.log(title);
-			console.log("----------");
-
 			return (
 				rule.ruleField === title &&
 				rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
