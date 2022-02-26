@@ -34,7 +34,7 @@ const validateData = async (
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
 		// Clean data
 		const newRow = cleanData(csvJSON[i], projectVersion, fields);
-		const rowNumber = i + 1;
+		const rowNumber = i + 2;
 		csvJSON[i] = newRow;
 		const row = newRow;
 
@@ -128,10 +128,7 @@ const validateDateFormat = (date: string) => {
 
 	if (dateArray.length !== 3) return false;
 
-	if (Number(date[0]) > 12 || Number(date[1]) > 31 || Number(date[2]) < 2000)
-		return false;
-
-	return true;
+	return Number(date[0]) > 12 || Number(date[1]) > 31 || Number(date[2]) < 2000;
 };
 
 const validateDataType = (row, rules: Rule[], fields: Field[]) => {
@@ -199,7 +196,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				break;
 			case DataTypes.DateTime:
 				const isDateFormat = validateDateFormat(data);
-				if (!isDateFormat) {
+				if (isDateFormat) {
 					errors.push({
 						message: `${field}: Please enter the date in MM/DD/YYYY format`,
 					});
