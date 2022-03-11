@@ -1,6 +1,4 @@
-import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
-import { Errors, Rules } from "../types";
 
 const validateColumns = async (
 	csvJSON: { [key: string]: any }[],
