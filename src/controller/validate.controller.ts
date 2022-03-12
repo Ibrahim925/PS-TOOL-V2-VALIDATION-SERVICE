@@ -20,9 +20,8 @@ export const validate_data = async (
 	res: Response
 ) => {
 	const { csvText, projectName, objectName } = req.body;
-	const [{ projectVersion }] = await connection.getRepository(Project).find({
+	const { projectVersion } = await connection.getRepository(Project).findOne({
 		select: ["projectVersion"],
-		take: 1,
 		where: {
 			projectName,
 		},
