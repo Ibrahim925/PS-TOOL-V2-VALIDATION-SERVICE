@@ -1,4 +1,3 @@
-import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
 
 const isStringNumeric = (str: string) => {
@@ -20,8 +19,7 @@ const stringToBool = (str: string) => {
 
 export const CSVToJSON = async (
 	data: string,
-	projectName,
-	objectName,
+	rules: Rule[],
 	delimiter = ","
 ): Promise<any> => {
 	// Extracts headers from CSV string
@@ -33,13 +31,6 @@ export const CSVToJSON = async (
 	const titles = [];
 
 	const fieldOccurrenceTracker = {};
-
-	const rules = await connection.getRepository(Rule).find({
-		where: {
-			ruleObject: objectName,
-			ruleProject: projectName,
-		},
-	});
 
 	for await (const title of titlesWithoutOccurrence) {
 		if (fieldOccurrenceTracker[title] === undefined) {
