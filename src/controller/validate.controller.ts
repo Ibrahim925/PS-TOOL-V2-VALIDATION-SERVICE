@@ -119,7 +119,7 @@ export const validate_data = async (
 
 		await ObjectData.delete({ objectName, objectProject: projectName });
 
-		console.log(rules.map((rule) => rule.ruleDependency.split(".")[0]));
+		console.log(rules.map((rule) => rule.ruleDependency));
 
 		if (
 			rules
