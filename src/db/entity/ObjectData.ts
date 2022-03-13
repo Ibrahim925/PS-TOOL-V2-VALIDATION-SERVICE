@@ -25,6 +25,9 @@ export class ObjectData extends BaseEntity {
 	objectValue;
 
 	@Column()
+	objectRow: number;
+
+	@Column()
 	objectTemp: boolean;
 
 	@CreateDateColumn()
