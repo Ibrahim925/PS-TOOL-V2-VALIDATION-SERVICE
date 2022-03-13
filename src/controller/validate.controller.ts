@@ -37,6 +37,24 @@ export const validate_data = async (
 		},
 	});
 
+	// Check if all parent objects have been uploaded already
+	for (const rule of rules) {
+		if (rule.ruleDependency) {
+			const [parentObject, parentField] = rule.ruleDependency.split(".");
+
+			const foundData = await ObjectData.findOne({
+				where: {
+					objectProject: projectName,
+					objectName: parentObject,
+				},
+			});
+
+			if (!foundData) {
+				return res.json({ missingDependencies: [objectName] });
+			}
+		}
+	}
+
 	const errors: Errors = [];
 
 	console.log("Converting CSV to JSON");
