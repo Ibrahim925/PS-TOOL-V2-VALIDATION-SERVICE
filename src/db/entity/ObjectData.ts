@@ -21,7 +21,7 @@ export class ObjectData extends BaseEntity {
 	@Column()
 	objectField: string;
 
-	@Column()
+	@Column("text")
 	objectValue;
 
 	@Column()

@@ -8,6 +8,7 @@ import { connection } from "../db/connection";
 import { Rule } from "../db/entity/Rule";
 import { createNotification } from "../helpers/notificationHandler";
 import { getDay } from "../helpers/getNow";
+import { ObjectData } from "../db/entity/ObjectData";
 
 interface ValidateDataBody {
 	csvText: string;
@@ -20,7 +21,7 @@ export const validate_data = async (
 	res: Response
 ) => {
 	const { csvText, projectName, objectName } = req.body;
-	const { projectVersion } = await connection.getRepository(Project).findOne({
+	const { projectVersion } = await Project.findOne({
 		select: ["projectVersion"],
 		where: {
 			projectName,
@@ -29,7 +30,7 @@ export const validate_data = async (
 
 	console.log(csvText);
 
-	const rules = await connection.getRepository(Rule).find({
+	const rules = await Rule.find({
 		where: {
 			ruleProject: projectName,
 			ruleObject: objectName,
@@ -97,6 +98,22 @@ export const validate_data = async (
 			projectName,
 			objectName
 		);
+
+		for (const row of csvJSON) {
+			const fields = Object.keys(row);
+
+			for await (const field of fields) {
+				const persistData = new ObjectData();
+
+				persistData.objectField = field;
+				persistData.objectName = objectName;
+				persistData.objectProject = projectName;
+				persistData.objectTemp = false;
+				persistData.objectValue = row[field];
+
+				await connection.manager.save(persistData);
+			}
+		}
 
 		return res.json({
 			success: true,
