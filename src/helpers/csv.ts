@@ -73,11 +73,10 @@ export const CSVToJSON = async (
 };
 
 export const JSONtoCSV = async (csvJSON: any[]) => {
-	const fields = Object.keys(csvJSON[0]);
+	const fields = Object.keys(csvJSON[0]).map((field) => field.split("~")[0]);
 
 	try {
 		const csv = csvJSON.map((row) => Object.values(row));
-		console;
 		csv.unshift(fields);
 
 		return csv.join("\n");
