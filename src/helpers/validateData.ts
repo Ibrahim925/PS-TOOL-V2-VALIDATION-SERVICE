@@ -182,8 +182,6 @@ const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
 		const parentObject = arr[0];
 		const parentField = arr[1];
 
-		console.log("----------------", parentObject, parentField, projectName);
-
 		let parentData = await ObjectData.find({
 			where: {
 				objectName: parentObject,
@@ -193,8 +191,6 @@ const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
 		});
 
 		parentData = parentData.map((row) => row.objectValue);
-
-		console.log("-------------------------------------", parentData, data);
 
 		if (!parentData.includes(data))
 			errors.push({
