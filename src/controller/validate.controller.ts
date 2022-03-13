@@ -99,7 +99,9 @@ export const validate_data = async (
 			objectName
 		);
 
-		for (const row of csvJSON) {
+		for (let i = 0, len = csvJSON.length; i < len; i++) {
+			const row = csvJSON[i];
+
 			const fields = Object.keys(row);
 
 			for await (const field of fields) {
@@ -110,6 +112,7 @@ export const validate_data = async (
 				persistData.objectProject = projectName;
 				persistData.objectTemp = false;
 				persistData.objectValue = row[field];
+				persistData.objectRow = i + 2;
 
 				await connection.manager.save(persistData);
 			}
