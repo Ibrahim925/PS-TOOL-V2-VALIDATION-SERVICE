@@ -30,12 +30,13 @@ export const validate_data = async (
 
 	console.log(csvText);
 
-	const rules = await Rule.find({
+	const allRules = await Rule.find({
 		where: {
 			ruleProject: projectName,
-			ruleObject: objectName,
 		},
 	});
+
+	const rules = allRules.filter((rule) => rule.ruleObject === objectName);
 
 	// Check if all parent objects have been uploaded already
 	for await (const rule of rules) {
@@ -119,13 +120,8 @@ export const validate_data = async (
 
 		await ObjectData.delete({ objectName, objectProject: projectName });
 
-		console.log(
-			"-----------------------",
-			rules.map((rule) => rule.ruleDependency)
-		);
-
 		if (
-			rules
+			allRules
 				.map((rule) => rule.ruleDependency.split(".")[0])
 				.includes(objectName)
 		) {
