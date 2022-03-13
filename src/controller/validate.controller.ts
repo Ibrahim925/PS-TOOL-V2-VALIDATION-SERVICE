@@ -50,7 +50,7 @@ export const validate_data = async (
 			});
 
 			if (!foundData) {
-				return res.json({ missingDependencies: [objectName] });
+				return res.json({ missingDependencies: [parentObject] });
 			}
 		}
 	}
