@@ -1,4 +1,4 @@
-import { DataTypes, Errors, Versions } from "../types";
+import { Cases, DataTypes, Errors, Versions } from "../types";
 import { Rule } from "../db/entity/Rule";
 
 // TODO:
@@ -33,7 +33,7 @@ const validateData = async (
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
 		// Clean data
-		const newRow = cleanData(csvJSON[i], projectVersion, fields);
+		const newRow = cleanData(csvJSON[i], projectVersion, fields, rules);
 		const rowNumber = i + 2;
 		csvJSON[i] = newRow;
 		const row = newRow;
@@ -73,9 +73,19 @@ const validateData = async (
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
-const cleanData = (row: any, projectVersion: Versions, fields: Field[]) => {
+const cleanData = (
+	row: any,
+	projectVersion: Versions,
+	fields: Field[],
+	rules: Rule[]
+) => {
 	for (let i = 0, len = fields.length; i < len; i++) {
 		let { field, occurrence, fullField } = fields[i];
+
+		const [rule] = rules.filter(
+			(rule) =>
+				rule.ruleField === field && rule.ruleFieldOccurrence === occurrence
+		);
 
 		const dataType = typeof row[fullField];
 		if (dataType === "string") {
@@ -113,6 +123,24 @@ const cleanData = (row: any, projectVersion: Versions, fields: Field[]) => {
 				}
 
 				row[fullField] = newStr;
+
+				switch (rule.ruleCase) {
+					case Cases.Camel:
+						row[fullField] = row.fullField
+							.split(" ")
+							.map((word: string) => word[0].toUpperCase() + word.slice(1))
+							.join("");
+						break;
+					case Cases.Lower:
+						row[fullField] = row[fullField].toLowerCase();
+						break;
+					case Cases.Snake:
+						row[fullField] = row[fullField].toLowerCase().split(" ").join("_");
+						break;
+					case Cases.Upper:
+						row[fullField] = row[fullField].toUpperCase();
+						break;
+				}
 			}
 		}
 	}
