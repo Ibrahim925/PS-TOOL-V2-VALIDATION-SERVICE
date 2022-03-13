@@ -99,6 +99,8 @@ export const validate_data = async (
 			objectName
 		);
 
+		await ObjectData.delete({ objectName, objectProject: projectName });
+
 		for (let i = 0, len = csvJSON.length; i < len; i++) {
 			const row = csvJSON[i];
 
