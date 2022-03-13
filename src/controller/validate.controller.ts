@@ -109,7 +109,7 @@ export const validate_data = async (
 			for await (const field of fields) {
 				const persistData = new ObjectData();
 
-				persistData.objectField = field;
+				persistData.objectField = field.split("~")[0];
 				persistData.objectName = objectName;
 				persistData.objectProject = projectName;
 				persistData.objectTemp = false;

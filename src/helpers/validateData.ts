@@ -198,7 +198,7 @@ const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
 
 		if (!parentData.includes(data))
 			errors.push({
-				message: `${field}: "${data}" does not exist in the ${parentObject} table`,
+				message: `${field}: "${data}" does not exist in the ${parentObject} object`,
 			});
 	}
 
