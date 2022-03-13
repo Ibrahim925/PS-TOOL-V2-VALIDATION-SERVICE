@@ -38,7 +38,7 @@ export const validate_data = async (
 	});
 
 	// Check if all parent objects have been uploaded already
-	for (const rule of rules) {
+	for await (const rule of rules) {
 		if (rule.ruleDependency) {
 			const [parentObject, parentField] = rule.ruleDependency.split(".");
 
