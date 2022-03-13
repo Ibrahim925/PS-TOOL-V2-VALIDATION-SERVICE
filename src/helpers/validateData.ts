@@ -1,5 +1,6 @@
 import { Cases, DataTypes, Errors, Versions } from "../types";
 import { Rule } from "../db/entity/Rule";
+import { ObjectData } from "../db/entity/ObjectData";
 
 // TODO:
 // set up dependency checks
@@ -39,6 +40,17 @@ const validateData = async (
 		const row = newRow;
 
 		// Validate dependency
+		const dependencyErrors = await validateDependencies(row, rules, fields);
+
+		if (dependencyErrors.errorCount) {
+			for (const error of dependencyErrors.payload.errors) {
+				outputCSV.push({
+					...csvJSON[i],
+					Error: error.message,
+					"Row Number": rowNumber,
+				});
+			}
+		}
 
 		// Validate existence
 		const existenceErrors = validateDataExistence(row, rules, fields);
@@ -146,6 +158,45 @@ const cleanData = (
 	}
 
 	return row;
+};
+
+// Validate dependencies
+const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
+	const errors: Errors = [];
+
+	for (const { field, occurrence, fullField } of fields) {
+		const [rule] = rules.filter(
+			(rule) =>
+				rule.ruleField === field && rule.ruleFieldOccurrence === occurrence
+		);
+
+		const projectName = rule.ruleProject;
+
+		const data = row[fullField].toString();
+
+		if (!rule.ruleDependency) continue;
+
+		const arr = rule.ruleDependency.split(".");
+		const parentObject = arr[0];
+		const parentField = arr[1];
+
+		let parentData = await ObjectData.find({
+			where: {
+				objectName: parentObject,
+				objectField: parentField,
+				objectProject: projectName,
+			},
+		});
+
+		parentData = parentData.map((row) => row.objectValue);
+
+		if (!parentData.includes(data))
+			errors.push({
+				message: `${field}: "${data}" does not exist in the ${parentObject} table`,
+			});
+	}
+
+	return { errorCount: errors.length, payload: { errors } };
 };
 
 // Validate datatype
