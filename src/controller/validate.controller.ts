@@ -119,22 +119,28 @@ export const validate_data = async (
 
 		await ObjectData.delete({ objectName, objectProject: projectName });
 
-		for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
-			const row = exportCsvJSON[i];
+		if (
+			rules
+				.map((rule) => rule.ruleDependency.split(".")[0])
+				.includes(objectName)
+		) {
+			for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
+				const row = exportCsvJSON[i];
 
-			const fields = Object.keys(row);
+				const fields = Object.keys(row);
 
-			for await (const field of fields) {
-				const persistData = new ObjectData();
+				for await (const field of fields) {
+					const persistData = new ObjectData();
 
-				persistData.objectField = field.split("~")[0];
-				persistData.objectName = objectName;
-				persistData.objectProject = projectName;
-				persistData.objectTemp = false;
-				persistData.objectValue = row[field];
-				persistData.objectRow = i + 2;
+					persistData.objectField = field.split("~")[0];
+					persistData.objectName = objectName;
+					persistData.objectProject = projectName;
+					persistData.objectTemp = false;
+					persistData.objectValue = row[field];
+					persistData.objectRow = i + 2;
 
-				await connection.manager.save(persistData);
+					await connection.manager.save(persistData);
+				}
 			}
 		}
 
