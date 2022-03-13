@@ -50,6 +50,8 @@ const validateData = async (
 					"Row Number": rowNumber,
 				});
 			}
+
+			errorCount += dependencyErrors.errorCount;
 		}
 
 		// Validate existence
@@ -179,6 +181,8 @@ const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
 		const arr = rule.ruleDependency.split(".");
 		const parentObject = arr[0];
 		const parentField = arr[1];
+
+		console.log("----------------", parentObject, parentField, projectName);
 
 		let parentData = await ObjectData.find({
 			where: {
