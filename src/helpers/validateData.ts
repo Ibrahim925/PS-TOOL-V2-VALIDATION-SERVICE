@@ -2,10 +2,6 @@ import { Cases, DataTypes, Errors, Versions } from "../types";
 import { Rule } from "../db/entity/Rule";
 import { ObjectData } from "../db/entity/ObjectData";
 
-// TODO:
-// set up dependency checks
-// change put each error on a different line
-
 interface Field {
 	field: string;
 	occurrence: number;
