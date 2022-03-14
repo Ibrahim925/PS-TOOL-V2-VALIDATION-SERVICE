@@ -25,8 +25,14 @@ const validateData = async (
 			fullField,
 		};
 	});
+
 	const outputCSV = [];
-	let errorCount = 0;
+
+	let errorCount = {
+		dependency: 0,
+		existence: 0,
+		dataType: 0,
+	};
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
 		// Clean data
@@ -47,7 +53,7 @@ const validateData = async (
 				});
 			}
 
-			errorCount += dependencyErrors.errorCount;
+			errorCount.dependency = dependencyErrors.errorCount;
 		}
 
 		// Validate existence
@@ -61,7 +67,7 @@ const validateData = async (
 				});
 			}
 
-			errorCount += existenceErrors.errorCount;
+			errorCount.existence += existenceErrors.errorCount;
 		}
 
 		// Validate Datatype
@@ -75,7 +81,7 @@ const validateData = async (
 				});
 			}
 
-			errorCount += dataTypeErrors.errorCount;
+			errorCount.dataType += dataTypeErrors.errorCount;
 		}
 	}
 

@@ -86,16 +86,21 @@ export const validate_data = async (
 		projectVersion
 	);
 
+	// Extract error counts
+	const { dataType, dependency, existence } = errorCount;
+
+	const totalErrors = dataType + dependency + existence;
+
 	// Create CSV with errors
-	if (errorCount) {
+	if (totalErrors) {
 		const csvText = await JSONtoCSV(outputCsvJSON);
 
 		const day = getDay();
 
 		// Create notification
 		await createNotification(
-			`${projectName} uploaded ${objectName} with ${errorCount} error${
-				errorCount > 1 ? "s" : ""
+			`${projectName} uploaded ${objectName} with ${totalErrors} error${
+				totalErrors > 1 ? "s" : ""
 			}`,
 			projectName,
 			objectName
@@ -107,7 +112,7 @@ export const validate_data = async (
 				csvText,
 				path: `${rules[0].ruleObject} Output - ${day}.csv`,
 			},
-			errorCount,
+			totalErrors,
 		});
 	} else {
 		const csvText = await JSONtoCSV(exportCsvJSON);
