@@ -139,7 +139,7 @@ export const validate_data = async (
 				csvText,
 				path: `${rules[0].ruleObject} Output - ${day}.csv`,
 			},
-			totalErrors,
+			errorCount: totalErrors,
 		});
 	} else {
 		const csvText = await JSONtoCSV(exportCsvJSON);
