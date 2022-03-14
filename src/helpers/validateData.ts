@@ -32,6 +32,7 @@ const validateData = async (
 		dependency: 0, // 001
 		existence: 0, // 002
 		dataType: 0, // 003
+		rows: 0,
 	};
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
@@ -40,6 +41,7 @@ const validateData = async (
 		const rowNumber = i + 2;
 		csvJSON[i] = newRow;
 		const row = newRow;
+		let rowHasErrors = false; // For counting the number of errored rows
 
 		// Validate dependency
 		const dependencyErrors = await validateDependencies(row, rules, fields);
@@ -54,6 +56,7 @@ const validateData = async (
 			}
 
 			errorCount.dependency = dependencyErrors.errorCount;
+			rowHasErrors = true;
 		}
 
 		// Validate existence
@@ -68,6 +71,7 @@ const validateData = async (
 			}
 
 			errorCount.existence += existenceErrors.errorCount;
+			rowHasErrors = true;
 		}
 
 		// Validate Datatype
@@ -82,6 +86,7 @@ const validateData = async (
 			}
 
 			errorCount.dataType += dataTypeErrors.errorCount;
+			rowHasErrors = true;
 		}
 	}
 

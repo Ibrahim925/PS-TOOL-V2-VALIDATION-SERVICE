@@ -88,7 +88,7 @@ export const validate_data = async (
 	);
 
 	// Extract error counts
-	const { dataType, dependency, existence } = errorCount;
+	const { dataType, dependency, existence, rows } = errorCount;
 
 	const totalErrors = dataType + dependency + existence;
 
@@ -107,11 +107,11 @@ export const validate_data = async (
 	// 2. Insert record
 	const newError = new Error();
 
-	newError.errorCount = totalErrors;
+	newError.errorCount = rows;
 	newError.errorDataType = dataType;
 	newError.errorDependency = dependency;
 	newError.errorExistence = existence;
-	newError.errorFree = csvJSON.length - totalErrors;
+	newError.errorFree = csvJSON.length - rows;
 	newError.errorObject = objectName;
 	newError.errorProject = projectName;
 	newError.errorRun = currentRun;
