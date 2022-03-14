@@ -242,7 +242,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 				}
 				break;
 			case DataTypes.Char:
-				if (dataType !== "STRING" && dataType.length !== 1) {
+				if (dataType !== "STRING" || data.length !== 1) {
 					errors.push({
 						message: `${field}: Expected ${DataTypes.Char} but got ${dataType}`,
 					});
