@@ -125,7 +125,7 @@ export const validate_data = async (
 		const day = getDay();
 
 		// Create notification
-		createNotification(
+		await createNotification(
 			`${projectName} uploaded ${objectName} with ${totalErrors} error${
 				totalErrors > 1 ? "s" : ""
 			}`,
