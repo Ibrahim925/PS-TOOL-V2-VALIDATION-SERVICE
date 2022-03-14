@@ -116,7 +116,7 @@ export const validate_data = async (
 	newError.errorProject = projectName;
 	newError.errorRun = currentRun;
 
-	await connection.manager.save(newError);
+	connection.manager.save(newError);
 
 	// Create CSV with errors
 	if (totalErrors) {
@@ -125,7 +125,7 @@ export const validate_data = async (
 		const day = getDay();
 
 		// Create notification
-		await createNotification(
+		createNotification(
 			`${projectName} uploaded ${objectName} with ${totalErrors} error${
 				totalErrors > 1 ? "s" : ""
 			}`,
@@ -144,7 +144,7 @@ export const validate_data = async (
 	} else {
 		const csvText = await JSONtoCSV(exportCsvJSON);
 
-		await createNotification(
+		createNotification(
 			`${projectName} successfully uploaded ${objectName} with no errors!`,
 			projectName,
 			objectName
@@ -177,7 +177,7 @@ export const validate_data = async (
 			}
 		}
 
-		return res.json({
+		res.json({
 			success: true,
 			payload: {
 				csvText,
