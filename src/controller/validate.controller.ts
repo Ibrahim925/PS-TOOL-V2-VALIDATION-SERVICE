@@ -9,6 +9,7 @@ import { Rule } from "../db/entity/Rule";
 import { createNotification } from "../helpers/notificationHandler";
 import { getDay } from "../helpers/getNow";
 import { ObjectData } from "../db/entity/ObjectData";
+import { Error } from "../db/entity/Error";
 
 interface ValidateDataBody {
 	csvText: string;
@@ -90,6 +91,32 @@ export const validate_data = async (
 	const { dataType, dependency, existence } = errorCount;
 
 	const totalErrors = dataType + dependency + existence;
+
+	// Insert validation record:
+	// 1. Get current run number from previous run number
+	let prevRun: Error | { errorRun: number } =
+		await Error.getRepository().findOne({
+			where: { errorProject: projectName, errorObject: objectName },
+			order: { id: "DESC" },
+		});
+
+	if (!prevRun) prevRun = { errorRun: 0 }; // Handle no previous runs
+
+	const currentRun = prevRun.errorRun + 1;
+
+	// 2. Insert record
+	const newError = new Error();
+
+	newError.errorCount = totalErrors;
+	newError.errorDataType = dataType;
+	newError.errorDependency = dependency;
+	newError.errorExistence = existence;
+	newError.errorFree = csvJSON.length - totalErrors;
+	newError.errorObject = objectName;
+	newError.errorProject = projectName;
+	newError.errorRun = currentRun;
+
+	await connection.manager.save(newError);
 
 	// Create CSV with errors
 	if (totalErrors) {

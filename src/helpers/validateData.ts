@@ -29,9 +29,9 @@ const validateData = async (
 	const outputCSV = [];
 
 	let errorCount = {
-		dependency: 0,
-		existence: 0,
-		dataType: 0,
+		dependency: 0, // 001
+		existence: 0, // 002
+		dataType: 0, // 003
 	};
 
 	for (let i = 0, length = csvJSON.length; i < length; i++) {
