@@ -226,7 +226,7 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 		const ruleTypeArray = rule.ruleDataType.split("(");
 		let type = ruleTypeArray[0];
 		let length;
-		if (ruleTypeArray[0] === "STRING" || ruleTypeArray[0] === "NUMBER") {
+		if (ruleTypeArray[0] === "STRING" || ruleTypeArray[0] === "INTEGER") {
 			length = Number(ruleTypeArray[1].split(")")[0]);
 		}
 		const data = row[fullField];
