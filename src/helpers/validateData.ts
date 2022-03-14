@@ -88,6 +88,8 @@ const validateData = async (
 			errorCount.dataType += dataTypeErrors.errorCount;
 			rowHasErrors = true;
 		}
+
+		if (rowHasErrors) errorCount.rows++;
 	}
 
 	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
