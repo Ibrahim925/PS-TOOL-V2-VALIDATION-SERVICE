@@ -52,6 +52,7 @@ const validateData = async (
 					...csvJSON[i],
 					Error: error.message,
 					"Row Number": rowNumber,
+					"Error Type": "DEPENDENCY",
 				});
 			}
 
@@ -67,6 +68,7 @@ const validateData = async (
 					...csvJSON[i],
 					Error: error.message,
 					"Row Number": rowNumber,
+					"Error Type": "MISSING DATA",
 				});
 			}
 
@@ -82,6 +84,7 @@ const validateData = async (
 					...csvJSON[i],
 					Error: error.message,
 					"Row Number": rowNumber,
+					"Error Type": "DATA TYPE",
 				});
 			}
 
