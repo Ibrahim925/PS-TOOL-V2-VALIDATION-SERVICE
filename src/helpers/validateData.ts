@@ -83,8 +83,8 @@ const validateData = async (
 				outputCSV.push({
 					...csvJSON[i],
 					Error: error.message,
-					"Row Number": rowNumber,
 					"Error Type": "DATA TYPE",
+					"Row Number": rowNumber,
 				});
 			}
 
