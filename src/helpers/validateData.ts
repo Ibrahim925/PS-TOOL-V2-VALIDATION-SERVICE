@@ -259,9 +259,9 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 		const data = row[fullField];
 		const dataType = (typeof data).toUpperCase();
 
-		const commonError = `<b>${field}</b>: Expected ${type} but got ${dataType}: `;
-		const upperBoundError = `<b>${field}</b>: ${type} must be less than or equal to ${upperBound}`;
-		const lowerBoundError = `<b>${field}</b>: ${type} must be greater than or equal to ${lowerBound}`;
+		const commonError = `${field}: Expected ${type} but got ${dataType}: `;
+		const upperBoundError = `${field}: ${type} must be less than or equal to ${upperBound}`;
+		const lowerBoundError = `${field}: ${type} must be greater than or equal to ${lowerBound}`;
 
 		switch (type) {
 			case DataTypes.Boolean:
