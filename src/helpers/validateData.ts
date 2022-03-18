@@ -251,8 +251,8 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			console.log(bounds, "------------BOUNDS");
 
 			if (bounds.length > 1) {
-				upperBound = Number(bounds[0]);
-				lowerBound = Number(bounds[1]);
+				upperBound = Number(bounds[1]);
+				lowerBound = Number(bounds[0]);
 			} else {
 				upperBound = Number(bounds[0]);
 			}
