@@ -38,6 +38,8 @@ export enum DataTypes {
 	Char = "CHAR",
 	DateTime = "DATETIME",
 	Text = "TEXT",
+	Decimal = "DECIMAL",
+	Nvarchar = "NVARCHAR",
 }
 
 export enum Cases {

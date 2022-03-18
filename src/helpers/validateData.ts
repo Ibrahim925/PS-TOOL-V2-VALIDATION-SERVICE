@@ -234,19 +234,40 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 		);
 
 		const ruleTypeArray = rule.ruleDataType.split("(");
-		let type = ruleTypeArray[0];
-		let length;
-		if (ruleTypeArray[0] === "STRING" || ruleTypeArray[0] === "INTEGER") {
-			length = Number(ruleTypeArray[1].split(")")[0]);
+		const type = ruleTypeArray[0].toUpperCase();
+		let upperBound = Number.POSITIVE_INFINITY;
+		let lowerBound = Number.NEGATIVE_INFINITY;
+
+		if (
+			(type === DataTypes.String ||
+				type === DataTypes.Integer ||
+				type === DataTypes.Nvarchar ||
+				type === DataTypes.Decimal) &&
+			ruleTypeArray.length > 1
+		) {
+			const bound = ruleTypeArray[1].split(")")[0];
+			const bounds = bound.split("-");
+
+			if (bounds.length > 1) {
+				upperBound = Number(bounds[0]);
+				lowerBound = Number(bounds[1]);
+			} else {
+				upperBound = Number(bounds[0]);
+			}
 		}
+
 		const data = row[fullField];
 		const dataType = (typeof data).toUpperCase();
+
+		const commonError = `<b>${field}</b>: Expected ${type} but got ${dataType}: `;
+		const upperBoundError = `<b>${field}</b>: ${type} must be less than or equal to ${upperBound}`;
+		const lowerBoundError = `<b>${field}</b>: ${type} must be greater than or equal to ${lowerBound}`;
 
 		switch (type) {
 			case DataTypes.Boolean:
 				if (dataType !== "BOOLEAN") {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.Boolean} but got ${dataType}`,
+						message: commonError,
 					});
 					continue;
 				}
@@ -254,36 +275,46 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 			case DataTypes.Char:
 				if (dataType !== "STRING" || data.length !== 1) {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.Char} but got ${dataType}`,
+						message: commonError,
 					});
 					continue;
 				}
 				break;
+			case DataTypes.Decimal:
 			case DataTypes.Integer:
 				if (dataType !== "NUMBER") {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.Integer} but got ${dataType}`,
+						message: commonError,
 					});
 					continue;
 				}
-				if (data > length) {
+				if (data > upperBound) {
 					errors.push({
-						message: `${field}: INTEGER must be less than or equal to ${length}`,
+						message: upperBoundError,
+					});
+				}
+				if (data < lowerBound) {
+					errors.push({
+						message: lowerBoundError,
 					});
 				}
 				break;
+			case DataTypes.Nvarchar:
 			case DataTypes.String:
 				if (dataType !== "STRING") {
 					errors.push({
-						message: `${field}: Expected ${DataTypes.String} but got ${dataType}`,
+						message: commonError,
 					});
 					continue;
 				}
-				if (data.length > length) {
+				if (data > upperBound) {
 					errors.push({
-						message: `${field}: STRING must be less than ${
-							length + 1
-						} characters long`,
+						message: upperBoundError,
+					});
+				}
+				if (data < lowerBound) {
+					errors.push({
+						message: lowerBoundError,
 					});
 				}
 				break;
