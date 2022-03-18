@@ -41,7 +41,7 @@ export const validate_data = async (
 
 	// Check if all parent objects have been uploaded already
 	for await (const rule of rules) {
-		if (rule.ruleDependency) {
+		if (rule.ruleDependency.length) {
 			const [parentObject, parentField] = rule.ruleDependency.split(".");
 
 			const foundData = await ObjectData.findOne({
