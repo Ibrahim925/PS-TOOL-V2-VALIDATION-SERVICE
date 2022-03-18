@@ -347,7 +347,7 @@ const validateDataExistence = (row, rules: Rule[], fields: Field[]) => {
 		);
 		const data = row[fullField];
 
-		if (!data && rule.ruleRequired)
+		if (!data && rule.ruleRequired && data !== 0)
 			errors.push({ message: `${field}: Expected a value in column ${field}` });
 	}
 
