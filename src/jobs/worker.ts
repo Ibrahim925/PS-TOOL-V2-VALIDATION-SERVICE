@@ -51,6 +51,8 @@ queue.process(async (job) => {
 		})
 		.promise();
 
+	console.log(csvText);
+
 	// Extract project version
 	const { projectVersion } = await Project.findOne({
 		select: ["projectVersion"],
