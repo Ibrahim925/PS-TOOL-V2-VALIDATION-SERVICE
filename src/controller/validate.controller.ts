@@ -39,17 +39,19 @@ export const get_job_status = async (
 
 	console.log(jobId, queue);
 
-	const job = await queue.getJob(jobId);
+	res.json("FJLSJFL");
 
-	const isJobCompleted = await job.isCompleted();
+	// const job = await queue.getJob(jobId);
 
-	if (!isJobCompleted) {
-		const jobProgress = await job.progress();
+	// const isJobCompleted = await job.isCompleted();
 
-		res.json({ jobProgress });
-	} else {
-		const data = await job.finished();
+	// if (!isJobCompleted) {
+	// 	const jobProgress = await job.progress();
 
-		res.json(data);
-	}
+	// 	res.json({ jobProgress });
+	// } else {
+	// 	const data = await job.finished();
+
+	// 	res.json(data);
+	// }
 };
