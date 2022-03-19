@@ -7,7 +7,6 @@ import { Errors, JobData } from "../types";
 import { Error } from "../db/entity/Error";
 import { connection } from "../db/connection";
 import { getDay } from "../helpers/getNow";
-import { ObjectData } from "../db/entity/ObjectData";
 import { Project } from "../db/entity/Project";
 import { Rule } from "../db/entity/Rule";
 import validateData from "../helpers/validateData";
@@ -28,6 +27,7 @@ queue.process(async (job) => {
 
 	const s3 = new AWS.S3();
 
+	// Get CSV data to validate from S3 bucket
 	const params = {
 		Bucket: "logisense-csv-data",
 		Key: `VALIDATE/${projectName}-${objectName}.csv`,
@@ -51,6 +51,7 @@ queue.process(async (job) => {
 		})
 		.promise();
 
+	// Extract project version
 	const { projectVersion } = await Project.findOne({
 		select: ["projectVersion"],
 		where: {
@@ -58,6 +59,7 @@ queue.process(async (job) => {
 		},
 	});
 
+	// Get all rules to validate that all parent objects have been uploaded
 	const allRules = await Rule.find({
 		where: {
 			ruleProject: projectName,
@@ -67,19 +69,59 @@ queue.process(async (job) => {
 	const rules = allRules.filter((rule) => rule.ruleObject === objectName);
 
 	// Check if all parent objects have been uploaded already
-	const foundData = await ObjectData.find({
-		where: {
-			objectProject: projectName,
-		},
-	});
+	const allObjects = [];
+	await s3
+		.listObjectsV2(
+			{ Bucket: "logisense-csv-data", Prefix: "PARENT/" },
+			(err, data) => {
+				allObjects.push(
+					...data.Contents.map(({ Key }) => {
+						const keyWithoutFolderName = Key.split("/")[1];
+						const splitProjectAndObject = keyWithoutFolderName.split("-");
+						splitProjectAndObject[1] = splitProjectAndObject[1].split(".")[0];
+
+						return {
+							objectProject: splitProjectAndObject[0],
+							objectName: splitProjectAndObject[1],
+						};
+					})
+						.filter((key) => key[0] === projectName)
+						.map(async (object) => {
+							let parentCsvText;
+
+							const params = {
+								Bucket: "logisense-csv-data",
+								Key: `VALIDATE/${object.objectProject}-${object.objectName}.csv`,
+							};
+
+							await s3
+								.getObject(params, async function (err, data) {
+									if (!err) {
+										parentCsvText = data.Body.toString();
+									} else {
+										console.log(err);
+									}
+								})
+								.promise();
+
+							const parentCsvJson = await CSVToJSON(parentCsvText, rules);
+
+							return { parentCsvJson, ...object };
+						})
+				);
+			}
+		)
+		.promise();
 
 	for await (const rule of rules) {
 		if (rule.ruleDependency.length) {
 			const [parentObject, parentField] = rule.ruleDependency.split(".");
 
-			const data = foundData.filter((data) => data.objectName === parentObject);
+			const objects = allObjects.filter(
+				(object) => object.objectProject === parentObject
+			);
 
-			if (!data.length) {
+			if (!objects.length) {
 				return { missingDependencies: [parentObject] };
 			}
 		}
@@ -116,7 +158,7 @@ queue.process(async (job) => {
 		csvJSON,
 		rules,
 		projectVersion,
-		foundData
+		allObjects
 	);
 
 	job.progress(80);
@@ -186,32 +228,23 @@ queue.process(async (job) => {
 			objectName
 		);
 
-		await ObjectData.delete({ objectName, objectProject: projectName });
-
 		if (
 			allRules
 				.map((rule) => rule.ruleDependency.split(".")[0])
 				.includes(objectName)
 		) {
-			// for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
-			for (let i = 0, len = exportCsvJSON.length; i < 1; i++) {
-				const row = exportCsvJSON[i];
+			// Persist parent data in S3 bucket
+			const params = {
+				Bucket: "logisense-csv-data",
+				Key: `PARENT/${projectName}-${objectName}.csv`,
+				Body: csvText,
+			};
 
-				const fields = Object.keys(row);
-
-				for await (const field of fields) {
-					const persistData = new ObjectData();
-
-					persistData.objectField = field.split("~")[0];
-					persistData.objectName = objectName;
-					persistData.objectProject = projectName;
-					persistData.objectTemp = false;
-					persistData.objectValue = row[field];
-					persistData.objectRow = i + 2;
-
-					await connection.manager.save(persistData);
-				}
-			}
+			await s3
+				.putObject(params, (err, data) => {
+					if (err) console.log(err);
+				})
+				.promise();
 		}
 
 		job.progress(99);

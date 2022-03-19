@@ -1,6 +1,5 @@
 import { Cases, DataTypes, Errors, Versions } from "../types";
 import { Rule } from "../db/entity/Rule";
-import { ObjectData } from "../db/entity/ObjectData";
 
 interface Field {
 	field: string;
@@ -13,7 +12,7 @@ const validateData = async (
 	csvJSON: any[],
 	rules: Rule[],
 	projectVersion: Versions,
-	parentData: ObjectData[]
+	allObjects: any[]
 ) => {
 	const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
 		const arr = fullField.split("~");
@@ -49,7 +48,7 @@ const validateData = async (
 			row,
 			rules,
 			fields,
-			parentData
+			allObjects
 		);
 
 		if (dependencyErrors.errorCount) {
@@ -185,7 +184,7 @@ const validateDependencies = async (
 	row,
 	rules: Rule[],
 	fields: Field[],
-	parentData: ObjectData[]
+	allObjects: any[]
 ) => {
 	const errors: Errors = [];
 
@@ -203,12 +202,9 @@ const validateDependencies = async (
 		const parentObject = arr[0];
 		const parentField = arr[1];
 
-		const parentFieldData = parentData
-			.filter(
-				(data) =>
-					data.objectField === parentField && data.objectName === parentObject
-			)
-			.map((row) => row.objectValue);
+		const parentFieldData = allObjects
+			.filter((object) => object.objectName === parentObject)
+			.map((row) => row[parentField]);
 
 		if (!parentFieldData.includes(data))
 			errors.push({
