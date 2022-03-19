@@ -114,7 +114,7 @@ queue.process(async (job) => {
 			const [parentObject, parentField] = rule.ruleDependency.split(".");
 
 			const objects = allObjects.filter(
-				(object) => object.objectProject === parentObject
+				(object) => object.objectName === parentObject
 			);
 
 			console.log(allObjects, "AYYYEEE");
