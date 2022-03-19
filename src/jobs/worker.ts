@@ -121,7 +121,7 @@ queue.process(async (job) => {
 				(object) => object.objectProject === parentObject
 			);
 
-			console.log(objects);
+			console.log(allObjects);
 
 			if (!objects.length) {
 				return { missingDependencies: [parentObject] };
