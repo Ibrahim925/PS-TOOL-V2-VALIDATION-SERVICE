@@ -202,9 +202,9 @@ const validateDependencies = async (
 		const parentObject = arr[0];
 		const parentField = arr[1];
 
-		const parentFieldData = allObjects.parentCsvJson
-			.filter((object) => object.objectName === parentObject)
-			.map((row) => row);
+		const parentFieldData = allObjects
+			.filter((object) => object.objectName === parentObject)[0]
+			.parentCsvJson.map((row) => row);
 
 		console.log(parentFieldData);
 
