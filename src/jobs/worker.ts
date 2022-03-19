@@ -39,15 +39,15 @@ queue.process(async (job) => {
 		.getObject(params, async function (err, data) {
 			if (!err) {
 				csvText = data.Body.toString();
-
-				await s3
-					.deleteObject(params, function (err, data) {
-						if (err) console.log(err);
-					})
-					.promise();
 			} else {
 				console.log(err);
 			}
+		})
+		.promise();
+
+	await s3
+		.deleteObject(params, function (err, data) {
+			if (err) console.log(err);
 		})
 		.promise();
 
