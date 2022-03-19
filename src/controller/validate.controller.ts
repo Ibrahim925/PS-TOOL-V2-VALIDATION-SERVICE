@@ -10,6 +10,7 @@ import { createNotification } from "../helpers/notificationHandler";
 import { getDay } from "../helpers/getNow";
 import { ObjectData } from "../db/entity/ObjectData";
 import { Error } from "../db/entity/Error";
+import validateNewCSV from "../worker/producer";
 
 interface ValidateDataBody {
 	csvText: string;
@@ -57,132 +58,141 @@ export const validate_data = async (
 		}
 	}
 
-	const errors: Errors = [];
+	const job = await validateNewCSV({
+		csvText,
+		projectName,
+		objectName,
+		projectVersion,
+	});
 
-	console.log("Converting CSV to JSON");
-	const csvJSON = await CSVToJSON(csvText, rules);
+	res.json(job.id);
 
-	// Validate columns
-	const isColumnsValid = await validateColumns(csvJSON, rules);
+	// const errors: Errors = [];
 
-	if (!isColumnsValid) {
-		errors.push({ message: "Please enter a sheet with the correct fields" });
+	// console.log("Converting CSV to JSON");
+	// const csvJSON = await CSVToJSON(csvText, rules);
 
-		await createNotification(
-			`${projectName} uploaded ${objectName} with incorrect fields`,
-			projectName,
-			objectName
-		);
+	// // Validate columns
+	// const isColumnsValid = await validateColumns(csvJSON, rules);
 
-		return res.json({
-			payload: { errors },
-			incorrectFields: true,
-		});
-	}
+	// if (!isColumnsValid) {
+	// 	errors.push({ message: "Please enter a sheet with the correct fields" });
 
-	// Validate data
-	const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
-		csvJSON,
-		rules,
-		projectVersion
-	);
+	// 	await createNotification(
+	// 		`${projectName} uploaded ${objectName} with incorrect fields`,
+	// 		projectName,
+	// 		objectName
+	// 	);
 
-	// Extract error counts
-	const { dataType, dependency, existence, rows } = errorCount;
+	// 	return res.json({
+	// 		payload: { errors },
+	// 		incorrectFields: true,
+	// 	});
+	// }
 
-	const totalErrors = dataType + dependency + existence;
+	// // Validate data
+	// const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
+	// 	csvJSON,
+	// 	rules,
+	// 	projectVersion
+	// );
 
-	// Insert validation record:
-	// 1. Get current run number from previous run number
-	let prevRun: Error | { errorRun: number } =
-		await Error.getRepository().findOne({
-			where: { errorProject: projectName, errorObject: objectName },
-			order: { id: "DESC" },
-		});
+	// // Extract error counts
+	// const { dataType, dependency, existence, rows } = errorCount;
 
-	if (!prevRun) prevRun = { errorRun: 0 }; // Handle no previous runs
+	// const totalErrors = dataType + dependency + existence;
 
-	const currentRun = prevRun.errorRun + 1;
+	// // Insert validation record:
+	// // 1. Get current run number from previous run number
+	// let prevRun: Error | { errorRun: number } =
+	// 	await Error.getRepository().findOne({
+	// 		where: { errorProject: projectName, errorObject: objectName },
+	// 		order: { id: "DESC" },
+	// 	});
 
-	// 2. Insert record
-	const newError = new Error();
+	// if (!prevRun) prevRun = { errorRun: 0 }; // Handle no previous runs
 
-	newError.errorCount = rows;
-	newError.errorDataType = dataType;
-	newError.errorDependency = dependency;
-	newError.errorExistence = existence;
-	newError.errorFree = csvJSON.length - rows;
-	newError.errorObject = objectName;
-	newError.errorProject = projectName;
-	newError.errorRun = currentRun;
+	// const currentRun = prevRun.errorRun + 1;
 
-	connection.manager.save(newError);
+	// // 2. Insert record
+	// const newError = new Error();
 
-	// Create CSV with errors
-	if (totalErrors) {
-		const csvText = await JSONtoCSV(outputCsvJSON);
+	// newError.errorCount = rows;
+	// newError.errorDataType = dataType;
+	// newError.errorDependency = dependency;
+	// newError.errorExistence = existence;
+	// newError.errorFree = csvJSON.length - rows;
+	// newError.errorObject = objectName;
+	// newError.errorProject = projectName;
+	// newError.errorRun = currentRun;
 
-		const day = getDay();
+	// connection.manager.save(newError);
 
-		// Create notification
-		await createNotification(
-			`${projectName} uploaded ${objectName} with ${totalErrors} error${
-				totalErrors > 1 ? "s" : ""
-			}`,
-			projectName,
-			objectName
-		);
+	// // Create CSV with errors
+	// if (totalErrors) {
+	// 	const csvText = await JSONtoCSV(outputCsvJSON);
 
-		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
-		return res.json({
-			payload: {
-				csvText,
-				path: `${rules[0].ruleObject} Output - ${day}.csv`,
-			},
-			errorCount: totalErrors,
-		});
-	} else {
-		const csvText = await JSONtoCSV(exportCsvJSON);
+	// 	const day = getDay();
 
-		createNotification(
-			`${projectName} successfully uploaded ${objectName} with no errors!`,
-			projectName,
-			objectName
-		);
+	// 	// Create notification
+	// 	await createNotification(
+	// 		`${projectName} uploaded ${objectName} with ${totalErrors} error${
+	// 			totalErrors > 1 ? "s" : ""
+	// 		}`,
+	// 		projectName,
+	// 		objectName
+	// 	);
 
-		await ObjectData.delete({ objectName, objectProject: projectName });
+	// 	// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
+	// 	return res.json({
+	// 		payload: {
+	// 			csvText,
+	// 			path: `${rules[0].ruleObject} Output - ${day}.csv`,
+	// 		},
+	// 		errorCount: totalErrors,
+	// 	});
+	// } else {
+	// 	const csvText = await JSONtoCSV(exportCsvJSON);
 
-		if (
-			allRules
-				.map((rule) => rule.ruleDependency.split(".")[0])
-				.includes(objectName)
-		) {
-			for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
-				const row = exportCsvJSON[i];
+	// 	createNotification(
+	// 		`${projectName} successfully uploaded ${objectName} with no errors!`,
+	// 		projectName,
+	// 		objectName
+	// 	);
 
-				const fields = Object.keys(row);
+	// 	await ObjectData.delete({ objectName, objectProject: projectName });
 
-				for await (const field of fields) {
-					const persistData = new ObjectData();
+	// 	if (
+	// 		allRules
+	// 			.map((rule) => rule.ruleDependency.split(".")[0])
+	// 			.includes(objectName)
+	// 	) {
+	// 		for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
+	// 			const row = exportCsvJSON[i];
 
-					persistData.objectField = field.split("~")[0];
-					persistData.objectName = objectName;
-					persistData.objectProject = projectName;
-					persistData.objectTemp = false;
-					persistData.objectValue = row[field];
-					persistData.objectRow = i + 2;
+	// 			const fields = Object.keys(row);
 
-					await connection.manager.save(persistData);
-				}
-			}
-		}
+	// 			for await (const field of fields) {
+	// 				const persistData = new ObjectData();
 
-		res.json({
-			success: true,
-			payload: {
-				csvText,
-				path: `${rules[0].ruleObject}.csv`,
-			},
-		});
-	}
+	// 				persistData.objectField = field.split("~")[0];
+	// 				persistData.objectName = objectName;
+	// 				persistData.objectProject = projectName;
+	// 				persistData.objectTemp = false;
+	// 				persistData.objectValue = row[field];
+	// 				persistData.objectRow = i + 2;
+
+	// 				await connection.manager.save(persistData);
+	// 			}
+	// 		}
+	// 	}
+
+	// 	res.json({
+	// 		success: true,
+	// 		payload: {
+	// 			csvText,
+	// 			path: `${rules[0].ruleObject}.csv`,
+	// 		},
+	// 	});
+	// }
 };

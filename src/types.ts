@@ -66,3 +66,10 @@ export interface LogiObject {
 	objectName: string;
 	objectConfig: Config;
 }
+
+export interface JobData {
+	csvText: string;
+	projectName: string;
+	objectName: string;
+	projectVersion: Versions;
+}
