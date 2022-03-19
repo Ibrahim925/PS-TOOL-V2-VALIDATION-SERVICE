@@ -69,49 +69,43 @@ queue.process(async (job) => {
 	const rules = allRules.filter((rule) => rule.ruleObject === objectName);
 
 	// Check if all parent objects have been uploaded already
-	const allObjects = [];
-	await s3
-		.listObjectsV2(
-			{ Bucket: "logisense-csv-data", Prefix: "PARENT/" },
-			(err, data) => {
-				allObjects.push(
-					...data.Contents.map(({ Key }) => {
-						const keyWithoutFolderName = Key.split("/")[1];
-						const splitProjectAndObject = keyWithoutFolderName.split("-");
-						splitProjectAndObject[1] = splitProjectAndObject[1].split(".")[0];
-
-						return {
-							objectProject: splitProjectAndObject[0],
-							objectName: splitProjectAndObject[1],
-						};
-					})
-						.filter((key) => key.objectProject === projectName)
-						.map(async (object) => {
-							let parentCsvText;
-
-							const params = {
-								Bucket: "logisense-csv-data",
-								Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
-							};
-
-							await s3
-								.getObject(params, async function (err, data) {
-									if (!err) {
-										parentCsvText = data.Body.toString();
-									} else {
-										console.log(err);
-									}
-								})
-								.promise();
-
-							const parentCsvJson = await CSVToJSON(parentCsvText, rules);
-
-							return { parentCsvJson, ...object };
-						})
-				);
-			}
-		)
+	const data = await s3
+		.listObjectsV2({ Bucket: "logisense-csv-data", Prefix: "PARENT/" })
 		.promise();
+
+	const allObjects = await Promise.all(
+		data.Contents.map(({ Key }) => {
+			const keyWithoutFolderName = Key.split("/")[1];
+			const splitProjectAndObject = keyWithoutFolderName.split("-");
+			splitProjectAndObject[1] = splitProjectAndObject[1].split(".")[0];
+
+			return {
+				objectProject: splitProjectAndObject[0],
+				objectName: splitProjectAndObject[1],
+			};
+		})
+			.filter((key) => key.objectProject === projectName)
+			.map(async (object) => {
+				let parentCsvText;
+
+				const params = {
+					Bucket: "logisense-csv-data",
+					Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
+				};
+
+				await s3.getObject(params, async function (err, data) {
+					if (!err) {
+						parentCsvText = data.Body.toString();
+					} else {
+						console.log(err);
+					}
+				}).promise;
+
+				const parentCsvJson = await CSVToJSON(parentCsvText, rules);
+
+				return { parentCsvJson, ...object };
+			})
+	);
 
 	for await (const rule of rules) {
 		if (rule.ruleDependency.length) {
