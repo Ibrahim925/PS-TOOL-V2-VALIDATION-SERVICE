@@ -173,6 +173,8 @@ queue.process(async (job) => {
 			}
 		}
 
+		console.log("HERHEHHEHE");
+
 		return {
 			success: true,
 			payload: {
