@@ -11,11 +11,31 @@ import { ObjectData } from "../db/entity/ObjectData";
 import { Project } from "../db/entity/Project";
 import { Rule } from "../db/entity/Rule";
 import validateData from "../helpers/validateData";
+import AWS from "aws-sdk";
+
+AWS.config.update({
+	region: "us-east-2",
+});
 
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
 
 queue.process(async (job) => {
-	const { csvText, objectName, projectName } = job.data;
+	const { objectName, projectName } = job.data;
+
+	const s3 = new AWS.S3();
+
+	let csvText;
+
+	await s3.getObject(
+		{ Bucket: "logisense-csv-data", Key: "test.csv" },
+		function (err, data) {
+			if (!err) {
+				csvText = data.Body.toString();
+			}
+		}
+	);
+
+	console.log(csvText);
 
 	const { projectVersion } = await Project.findOne({
 		select: ["projectVersion"],

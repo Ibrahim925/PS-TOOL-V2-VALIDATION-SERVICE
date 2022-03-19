@@ -67,7 +67,6 @@ export interface LogiObject {
 }
 
 export interface JobData {
-	csvText: string;
 	projectName: string;
 	objectName: string;
 }
