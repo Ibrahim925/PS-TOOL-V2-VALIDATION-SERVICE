@@ -1,4 +1,4 @@
-import { CustomRequest, Errors } from "../types";
+import { CustomRequest, Errors, Versions } from "../types";
 import { Response } from "express";
 import { CSVToJSON, JSONtoCSV } from "../helpers/csv";
 import validateColumns from "../helpers/validateColumns";
@@ -23,12 +23,14 @@ export const validate_data = async (
 	res: Response
 ) => {
 	const { csvText, projectName, objectName } = req.body;
-	const { projectVersion } = await Project.findOne({
-		select: ["projectVersion"],
-		where: {
-			projectName,
-		},
-	});
+	// const { projectVersion } = await Project.findOne({
+	// 	select: ["projectVersion"],
+	// 	where: {
+	// 		projectName,
+	// 	},
+	// });
+
+	const projectVersion = Versions.V10;
 
 	console.log(csvText);
 
