@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { Rule as RuleE } from "./db/entity/Rule";
 
 // Base custom request body
 export interface CustomRequest<P, B, Q> extends Request<P, {}, B, Q, {}> {
@@ -60,8 +61,6 @@ export interface Rule {
 	dependency: string;
 }
 
-export type Rules = Rule[];
-
 export interface LogiObject {
 	objectName: string;
 	objectConfig: Config;
@@ -71,5 +70,4 @@ export interface JobData {
 	csvText: string;
 	projectName: string;
 	objectName: string;
-	projectVersion: Versions;
 }
