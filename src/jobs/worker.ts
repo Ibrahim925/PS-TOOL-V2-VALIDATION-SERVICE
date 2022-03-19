@@ -30,14 +30,18 @@ queue.process(async (job) => {
 
 	let csvText;
 
-	await s3.getObject(
-		{ Bucket: "logisense-csv-data", Key: "test.csv" },
-		function (err, data) {
-			if (!err) {
-				csvText = data.Body.toString();
+	await s3
+		.getObject(
+			{ Bucket: "logisense-csv-data", Key: "test.csv" },
+			function (err, data) {
+				if (!err) {
+					csvText = data.Body.toString();
+				} else {
+					console.log(err);
+				}
 			}
-		}
-	);
+		)
+		.promise();
 
 	console.log(csvText);
 
