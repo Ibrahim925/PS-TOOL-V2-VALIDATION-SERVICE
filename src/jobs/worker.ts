@@ -85,7 +85,7 @@ queue.process(async (job) => {
 							objectName: splitProjectAndObject[1],
 						};
 					})
-						.filter((key) => key[0] === projectName)
+						.filter((key) => key.objectProject === projectName)
 						.map(async (object) => {
 							let parentCsvText;
 
@@ -120,8 +120,6 @@ queue.process(async (job) => {
 			const objects = allObjects.filter(
 				(object) => object.objectProject === parentObject
 			);
-
-			console.log(allObjects);
 
 			if (!objects.length) {
 				return { missingDependencies: [parentObject] };
