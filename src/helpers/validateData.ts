@@ -206,8 +206,6 @@ const validateDependencies = async (
 			.filter((object) => object.objectName === parentObject)[0]
 			.parentCsvJson.map((row) => row[parentField]);
 
-		console.log(parentField);
-
 		if (!parentFieldData.includes(data))
 			errors.push({
 				message: `${field}: "${data}" does not exist in the ${parentObject} object`,
@@ -220,8 +218,6 @@ const validateDependencies = async (
 // Validate datatype
 const validateDateFormat = (date: string) => {
 	const dateArray = date.split("/");
-
-	console.log(dateArray);
 
 	if (dateArray.length !== 3) return false;
 
