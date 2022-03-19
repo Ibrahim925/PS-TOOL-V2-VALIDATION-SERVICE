@@ -10,7 +10,7 @@ import { createNotification } from "../helpers/notificationHandler";
 import { getDay } from "../helpers/getNow";
 import { ObjectData } from "../db/entity/ObjectData";
 import { Error } from "../db/entity/Error";
-import validateNewCSV from "../worker/producer";
+import validateNewCSV from "../jobs/producer";
 
 interface ValidateDataBody {
 	csvText: string;
