@@ -37,6 +37,8 @@ export const get_job_status = async (
 ) => {
 	const { jobId } = req.params;
 
+	console.log(jobId, queue);
+
 	const job = await queue.getJob(jobId);
 
 	const isJobCompleted = await job.isCompleted();
