@@ -103,7 +103,7 @@ queue.process(async (job) => {
 					})
 					.promise();
 
-				const parentCsvJson = await CSVToJSON(parentCsvText, rules);
+				const parentCsvJson = await CSVToJSON(parentCsvText, rules, ",", false);
 
 				return { parentCsvJson, ...object };
 			})

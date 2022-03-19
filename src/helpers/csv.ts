@@ -20,7 +20,8 @@ const stringToBool = (str: string) => {
 export const CSVToJSON = async (
 	data: string,
 	rules: Rule[],
-	delimiter = ","
+	delimiter = ",",
+	includeOccurence = true
 ): Promise<any> => {
 	// Extracts headers from CSV string
 	const titlesWithoutOccurrence = data
@@ -48,7 +49,11 @@ export const CSVToJSON = async (
 
 		// Get object Occurrence
 		if (!rule) continue;
-		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+		if (includeOccurence) {
+			titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+		} else {
+			titles.push(`${title}`);
+		}
 	}
 
 	return data
