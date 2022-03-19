@@ -206,6 +206,8 @@ const validateDependencies = async (
 			.filter((object) => object.objectName === parentObject)
 			.map((row) => row[parentField]);
 
+		console.log(parentFieldData);
+
 		if (!parentFieldData.includes(data))
 			errors.push({
 				message: `${field}: "${data}" does not exist in the ${parentObject} object`,
