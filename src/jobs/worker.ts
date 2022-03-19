@@ -55,6 +55,7 @@ queue.process(async (job) => {
 
 	console.log("Converting CSV to JSON");
 	const csvJSON = await CSVToJSON(csvText, rules);
+	job.progress(15);
 
 	// Validate columns
 	const isColumnsValid = await validateColumns(csvJSON, rules);
@@ -74,6 +75,8 @@ queue.process(async (job) => {
 		};
 	}
 
+	job.progress(30);
+
 	// Validate data
 	const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
 		csvJSON,
@@ -81,6 +84,8 @@ queue.process(async (job) => {
 		projectVersion,
 		foundData
 	);
+
+	job.progress(80);
 
 	// Extract error counts
 	const { dataType, dependency, existence, rows } = errorCount;
@@ -128,6 +133,8 @@ queue.process(async (job) => {
 			objectName
 		);
 
+		job.progress(99);
+
 		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
 		return {
 			payload: {
@@ -173,7 +180,7 @@ queue.process(async (job) => {
 			}
 		}
 
-		console.log("HERHEHHEHE");
+		job.progress(99);
 
 		return {
 			success: true,
