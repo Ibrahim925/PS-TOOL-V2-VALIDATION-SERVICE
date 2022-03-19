@@ -105,7 +105,7 @@ queue.process(async (job) => {
 
 				const parentCsvJson = await CSVToJSON(parentCsvText, rules, ",", false);
 
-				console.log(parentCsvJson, "JFLKJFKLDJFKLDJFKLJDKLSFJKLSDJFDSJJJJJJ");
+				console.log(parentCsvText, "JFLKJFKLDJFKLDJFKLJDKLSFJKLSDJFDSJJJJJJ");
 
 				return { parentCsvJson, ...object };
 			})
