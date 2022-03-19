@@ -153,7 +153,7 @@ queue.process(async (job) => {
 				.includes(objectName)
 		) {
 			// for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
-			for (let i = 0, len = exportCsvJSON.length; i < 2; i++) {
+			for (let i = 0, len = exportCsvJSON.length; i < 1; i++) {
 				const row = exportCsvJSON[i];
 
 				const fields = Object.keys(row);
