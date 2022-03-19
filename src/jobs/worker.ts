@@ -8,6 +8,6 @@ console.log("WORKER RUNNING");
 
 console.log(queue, "FJLSLFDSK");
 
-queue.process(async (job) => {
+queue.on("active", async (job) => {
 	console.log(job, "--------------------------------JFLKDJKLDSJFKLDFJKSDLF");
 });
