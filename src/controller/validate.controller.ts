@@ -32,18 +32,17 @@ export const validate_data = async (
 		Bucket: "logisense-csv-data",
 		Key: "test.csv",
 		Body: csvText,
-		ContentType: "application/octet-stream",
-		ContentDisposition: "inline",
-		CacheControl: "public, max-age=86400",
 	};
 
-	s3.putObject(params, function (err, data) {
-		if (err) {
-			console.log("Error at uploadCSVFileOnS3Bucket function", err);
-		} else {
-			console.log("File uploaded Successfully");
-		}
-	});
+	await s3
+		.putObject(params, function (err, data) {
+			if (err) {
+				console.log("Error at uploadCSVFileOnS3Bucket function", err);
+			} else {
+				console.log("File uploaded Successfully");
+			}
+		})
+		.promise();
 
 	const job = await validateNewCSV({
 		projectName,
