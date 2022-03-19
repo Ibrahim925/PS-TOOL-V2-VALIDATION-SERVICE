@@ -48,12 +48,12 @@ export const CSVToJSON = async (
 		});
 
 		// Get object Occurrence
-		if (!rule) continue;
-		// if (includeOccurence) {
-		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
-		// } else {
-		// 	titles.push(title);
-		// }
+		if (!rule && includeOccurence) continue;
+		if (includeOccurence) {
+			titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+		} else {
+			titles.push(title);
+		}
 	}
 
 	return data
