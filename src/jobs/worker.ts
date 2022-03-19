@@ -15,6 +15,10 @@ import AWS from "aws-sdk";
 
 AWS.config.update({
 	region: "us-east-2",
+	credentials: {
+		accessKeyId: process.env.IAM_ACCESS_KEY,
+		secretAccessKey: process.env.IAM_SECRET_KEY,
+	},
 });
 
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
