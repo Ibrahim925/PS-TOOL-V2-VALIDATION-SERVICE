@@ -12,7 +12,7 @@ const validateData = async (
 	csvJSON: any[],
 	rules: Rule[],
 	projectVersion: Versions,
-	allObjects: any[]
+	allObjects: any
 ) => {
 	const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
 		const arr = fullField.split("~");
@@ -184,7 +184,7 @@ const validateDependencies = async (
 	row,
 	rules: Rule[],
 	fields: Field[],
-	allObjects: any[]
+	allObjects: any
 ) => {
 	const errors: Errors = [];
 
@@ -202,9 +202,9 @@ const validateDependencies = async (
 		const parentObject = arr[0];
 		const parentField = arr[1];
 
-		const parentFieldData = allObjects
+		const parentFieldData = allObjects.parentCsvJson
 			.filter((object) => object.objectName === parentObject)
-			.map((row) => row);
+			.map((row) => row[parentField]);
 
 		console.log(parentFieldData);
 
