@@ -89,8 +89,6 @@ queue.process(async (job) => {
 						.map(async (object) => {
 							let parentCsvText;
 
-							console.log(object, "FDJSKLFJSDKLFJSDKLFJKLSDJF");
-
 							const params = {
 								Bucket: "logisense-csv-data",
 								Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
@@ -122,6 +120,8 @@ queue.process(async (job) => {
 			const objects = allObjects.filter(
 				(object) => object.objectProject === parentObject
 			);
+
+			console.log(objects, "AYYYEEE");
 
 			if (!objects.length) {
 				return { missingDependencies: [parentObject] };
