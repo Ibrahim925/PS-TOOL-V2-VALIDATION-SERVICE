@@ -52,7 +52,7 @@ export const CSVToJSON = async (
 		if (includeOccurence) {
 			titles.push(`${title}~${rule.ruleFieldOccurrence}`);
 		} else {
-			titles.push(`${title}`);
+			titles.push(title);
 		}
 	}
 

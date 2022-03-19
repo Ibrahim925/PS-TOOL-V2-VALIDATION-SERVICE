@@ -204,9 +204,9 @@ const validateDependencies = async (
 
 		const parentFieldData = allObjects
 			.filter((object) => object.objectName === parentObject)[0]
-			.parentCsvJson.map((row) => row);
+			.parentCsvJson.map((row) => row[parentField]);
 
-		console.log(parentFieldData);
+		console.log(parentField);
 
 		if (!parentFieldData.includes(data))
 			errors.push({
