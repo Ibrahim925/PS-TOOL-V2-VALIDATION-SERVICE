@@ -45,7 +45,7 @@ queue.process(async (job) => {
 			});
 
 			if (!foundData) {
-				// return res.json({ missingDependencies: [parentObject] });
+				return { missingDependencies: [parentObject] };
 			}
 		}
 	}
@@ -67,10 +67,10 @@ queue.process(async (job) => {
 			objectName
 		);
 
-		// return res.json({
-		// 	payload: { errors },
-		// 	incorrectFields: true,
-		// });
+		return {
+			payload: { errors },
+			incorrectFields: true,
+		};
 	}
 
 	// Validate data
@@ -127,13 +127,13 @@ queue.process(async (job) => {
 		);
 
 		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
-		// return res.json({
-		// 	payload: {
-		// 		csvText,
-		// 		path: `${rules[0].ruleObject} Output - ${day}.csv`,
-		// 	},
-		// 	errorCount: totalErrors,
-		// });
+		return {
+			payload: {
+				csvText,
+				path: `${rules[0].ruleObject} Output - ${day}.csv`,
+			},
+			errorCount: totalErrors,
+		};
 	} else {
 		const csvText = await JSONtoCSV(exportCsvJSON);
 
@@ -170,12 +170,12 @@ queue.process(async (job) => {
 			}
 		}
 
-		// res.json({
-		// 	success: true,
-		// 	payload: {
-		// 		csvText,
-		// 		path: `${rules[0].ruleObject}.csv`,
-		// 	},
-		// });
+		return {
+			success: true,
+			payload: {
+				csvText,
+				path: `${rules[0].ruleObject}.csv`,
+			},
+		};
 	}
 });
