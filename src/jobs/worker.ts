@@ -215,7 +215,7 @@ queue.process(async (job) => {
 				csvText,
 				path: `${rules[0].ruleObject} Output - ${day}.csv`,
 			},
-			errorCount: totalErrors,
+			errorCount: rows,
 		};
 	} else {
 		const csvText = await JSONtoCSV(exportCsvJSON);
