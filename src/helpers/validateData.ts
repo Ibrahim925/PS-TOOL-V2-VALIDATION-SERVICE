@@ -10,9 +10,10 @@ interface Field {
 [];
 
 const validateData = async (
-	csvJSON: { [key: string]: any }[],
+	csvJSON: any[],
 	rules: Rule[],
-	projectVersion: Versions
+	projectVersion: Versions,
+	parentData: ObjectData[]
 ) => {
 	const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
 		const arr = fullField.split("~");
@@ -44,7 +45,12 @@ const validateData = async (
 		let rowHasErrors = false; // For counting the number of errored rows
 
 		// Validate dependency
-		const dependencyErrors = await validateDependencies(row, rules, fields);
+		const dependencyErrors = await validateDependencies(
+			row,
+			rules,
+			fields,
+			parentData
+		);
 
 		if (dependencyErrors.errorCount) {
 			for (const error of dependencyErrors.payload.errors) {
@@ -175,7 +181,12 @@ const cleanData = (
 };
 
 // Validate dependencies
-const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
+const validateDependencies = async (
+	row,
+	rules: Rule[],
+	fields: Field[],
+	parentData: ObjectData[]
+) => {
 	const errors: Errors = [];
 
 	for (const { field, occurrence, fullField } of fields) {
@@ -183,8 +194,6 @@ const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
 			(rule) =>
 				rule.ruleField === field && rule.ruleFieldOccurrence === occurrence
 		);
-
-		const projectName = rule.ruleProject;
 
 		const data = row[fullField].toString();
 
@@ -194,17 +203,14 @@ const validateDependencies = async (row, rules: Rule[], fields: Field[]) => {
 		const parentObject = arr[0];
 		const parentField = arr[1];
 
-		let parentData = await ObjectData.find({
-			where: {
-				objectName: parentObject,
-				objectField: parentField,
-				objectProject: projectName,
-			},
-		});
+		const parentFieldData = parentData
+			.filter(
+				(data) =>
+					data.objectField === parentField && data.objectName === parentObject
+			)
+			.map((row) => row.objectValue);
 
-		parentData = parentData.map((row) => row.objectValue);
-
-		if (!parentData.includes(data))
+		if (!parentFieldData.includes(data))
 			errors.push({
 				message: `${field}: "${data}" does not exist in the ${parentObject} object`,
 			});

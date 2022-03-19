@@ -33,18 +33,19 @@ queue.process(async (job) => {
 	const rules = allRules.filter((rule) => rule.ruleObject === objectName);
 
 	// Check if all parent objects have been uploaded already
+	const foundData = await ObjectData.find({
+		where: {
+			objectProject: projectName,
+		},
+	});
+
 	for await (const rule of rules) {
 		if (rule.ruleDependency.length) {
 			const [parentObject, parentField] = rule.ruleDependency.split(".");
 
-			const foundData = await ObjectData.findOne({
-				where: {
-					objectProject: projectName,
-					objectName: parentObject,
-				},
-			});
+			const data = foundData.filter((data) => data.objectName === parentObject);
 
-			if (!foundData) {
+			if (!data.length) {
 				return { missingDependencies: [parentObject] };
 			}
 		}
@@ -77,7 +78,8 @@ queue.process(async (job) => {
 	const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
 		csvJSON,
 		rules,
-		projectVersion
+		projectVersion,
+		foundData
 	);
 
 	// Extract error counts
