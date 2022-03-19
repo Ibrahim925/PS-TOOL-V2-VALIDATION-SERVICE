@@ -32,7 +32,10 @@ queue.process(async (job) => {
 
 	await s3
 		.getObject(
-			{ Bucket: "logisense-csv-data", Key: "test.csv" },
+			{
+				Bucket: "logisense-csv-data",
+				Key: `VALIDATE/${projectName}-${objectName}.csv`,
+			},
 			function (err, data) {
 				if (!err) {
 					csvText = data.Body.toString();

@@ -30,7 +30,7 @@ export const validate_data = async (
 	const s3 = new AWS.S3();
 	const params = {
 		Bucket: "logisense-csv-data",
-		Key: "test.csv",
+		Key: `VALIDATE/${projectName}-${objectName}.csv`,
 		Body: csvText,
 	};
 
