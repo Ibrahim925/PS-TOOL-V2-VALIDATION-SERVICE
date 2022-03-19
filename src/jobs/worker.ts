@@ -93,13 +93,15 @@ queue.process(async (job) => {
 					Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
 				};
 
-				await s3.getObject(params, async function (err, data) {
-					if (!err) {
-						parentCsvText = data.Body.toString();
-					} else {
-						console.log(err);
-					}
-				}).promise;
+				await s3
+					.getObject(params, async function (err, data) {
+						if (!err) {
+							parentCsvText = data.Body.toString();
+						} else {
+							console.log(err);
+						}
+					})
+					.promise();
 
 				const parentCsvJson = await CSVToJSON(parentCsvText, rules);
 
