@@ -93,7 +93,7 @@ queue.process(async (job) => {
 
 							const params = {
 								Bucket: "logisense-csv-data",
-								Key: `VALIDATE/${object.objectProject}-${object.objectName}.csv`,
+								Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
 							};
 
 							await s3
