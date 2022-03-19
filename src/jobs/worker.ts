@@ -150,7 +150,8 @@ queue.process(async (job) => {
 				.map((rule) => rule.ruleDependency.split(".")[0])
 				.includes(objectName)
 		) {
-			for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
+			// for (let i = 0, len = exportCsvJSON.length; i < len; i++) {
+			for (let i = 0, len = exportCsvJSON.length; i < 2; i++) {
 				const row = exportCsvJSON[i];
 
 				const fields = Object.keys(row);
