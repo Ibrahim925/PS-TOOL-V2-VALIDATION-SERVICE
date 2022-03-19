@@ -89,6 +89,8 @@ queue.process(async (job) => {
 						.map(async (object) => {
 							let parentCsvText;
 
+							console.log(object, "FDJSKLFJSDKLFJSDKLFJKLSDJF");
+
 							const params = {
 								Bucket: "logisense-csv-data",
 								Key: `VALIDATE/${object.objectProject}-${object.objectName}.csv`,
