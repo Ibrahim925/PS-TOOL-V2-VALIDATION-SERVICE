@@ -34,31 +34,31 @@ export const validate_data = async (
 
 	console.log(csvText);
 
-	const allRules = await Rule.find({
-		where: {
-			ruleProject: projectName,
-		},
-	});
+	// const allRules = await Rule.find({
+	// 	where: {
+	// 		ruleProject: projectName,
+	// 	},
+	// });
 
-	const rules = allRules.filter((rule) => rule.ruleObject === objectName);
+	// const rules = allRules.filter((rule) => rule.ruleObject === objectName);
 
 	// Check if all parent objects have been uploaded already
-	for await (const rule of rules) {
-		if (rule.ruleDependency.length) {
-			const [parentObject, parentField] = rule.ruleDependency.split(".");
+	// for await (const rule of rules) {
+	// 	if (rule.ruleDependency.length) {
+	// 		const [parentObject, parentField] = rule.ruleDependency.split(".");
 
-			const foundData = await ObjectData.findOne({
-				where: {
-					objectProject: projectName,
-					objectName: parentObject,
-				},
-			});
+	// 		const foundData = await ObjectData.findOne({
+	// 			where: {
+	// 				objectProject: projectName,
+	// 				objectName: parentObject,
+	// 			},
+	// 		});
 
-			if (!foundData) {
-				return res.json({ missingDependencies: [parentObject] });
-			}
-		}
-	}
+	// 		if (!foundData) {
+	// 			return res.json({ missingDependencies: [parentObject] });
+	// 		}
+	// 	}
+	// }
 
 	const job = await validateNewCSV({
 		csvText,
