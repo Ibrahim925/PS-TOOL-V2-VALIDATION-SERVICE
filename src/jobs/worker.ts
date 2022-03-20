@@ -149,6 +149,7 @@ queue.process(async (job) => {
 	job.progress(30);
 
 	// Validate data
+	console.log("Beginning data validation");
 	const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
 		csvJSON,
 		rules,
