@@ -64,7 +64,7 @@ export const get_job_status = async (
 
 	const job = await queue.getJob(jobId);
 
-	if (!job) return res.json(40);
+	if (!job) return res.json({ jobProgress: 40 });
 
 	const isJobCompleted = await job.isCompleted();
 
