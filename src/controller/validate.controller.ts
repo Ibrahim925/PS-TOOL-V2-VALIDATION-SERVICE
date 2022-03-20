@@ -2,7 +2,7 @@ import { CustomRequest, JobData } from "../types";
 import { Response } from "express";
 import validateNewCSV from "../jobs/producer";
 import Queue from "bull";
-import AWS from "aws-sdk";
+// import AWS from "aws-sdk";
 import fs from "fs";
 import "dotenv/config";
 
