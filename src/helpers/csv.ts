@@ -105,8 +105,8 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 	// return csv.join("\n");
 
 	const fields = fieldsWithOccurrence.map((field) => ({
-		label: field,
-		value: field.split("~")[0],
+		value: field,
+		label: field.split("~")[0],
 	}));
 
 	const opts = { fields };
