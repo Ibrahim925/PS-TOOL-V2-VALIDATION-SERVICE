@@ -88,6 +88,8 @@ export const get_job_status = async (
 
 		await s3.deleteObject(params).promise();
 
+		console.log(data);
+
 		res.json(data);
 	}
 };
