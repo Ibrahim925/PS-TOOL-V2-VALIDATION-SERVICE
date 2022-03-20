@@ -84,11 +84,9 @@ export const get_job_status = async (
 
 		const csvText = await s3.getObject(params).promise();
 
-		data.csvText = csvText.Body.toString();
+		data.payload.csvText = csvText.Body.toString();
 
 		await s3.deleteObject(params).promise();
-
-		console.log(data);
 
 		res.json(data);
 	}
