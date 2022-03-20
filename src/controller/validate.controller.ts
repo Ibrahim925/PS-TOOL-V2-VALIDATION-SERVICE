@@ -79,6 +79,11 @@ export const get_job_status = async (
 
 		job.remove();
 
+		if (data.missingDependencies || data.incorrectFields) {
+			res.json(data);
+			return;
+		}
+
 		const params = {
 			Bucket: "logisense-csv-data",
 			Key: "OUTPUT/" + data.payload.path,
