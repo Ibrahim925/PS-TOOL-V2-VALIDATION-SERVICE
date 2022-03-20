@@ -2,10 +2,10 @@ import { CustomRequest, JobData } from "../types";
 import { Response } from "express";
 import validateNewCSV from "../jobs/producer";
 import Queue from "bull";
-import { config, S3 } from "aws-sdk";
+import AWS from "aws-sdk";
 import "dotenv/config";
 
-config.update({
+AWS.config.update({
 	region: "us-east-2",
 	credentials: {
 		accessKeyId: process.env.IAM_ACCESS_KEY,
@@ -29,9 +29,9 @@ export const validate_data = async (
 
 	console.log(file);
 
-	res.send(200);
+	res.sendStatus(200);
 
-	// const s3 = new S3();
+	// const s3 = new AWS.S3();
 	// const params = {
 	// 	Bucket: "logisense-csv-data",
 	// 	Key: `VALIDATE/${projectName}-${objectName}.csv`,
