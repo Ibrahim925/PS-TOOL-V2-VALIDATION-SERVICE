@@ -11,7 +11,7 @@ import { Project } from "../db/entity/Project";
 import { Rule } from "../db/entity/Rule";
 import validateData from "../helpers/validateData";
 import AWS from "aws-sdk";
-import csv from "fast-csv";
+import * as csv from "fast-csv";
 
 AWS.config.update({
 	region: "us-east-2",
