@@ -40,7 +40,7 @@ queue.process(async (job) => {
 		const csvStream = s3.getObject(params).createReadStream();
 
 		csv.parseStream(csvStream).on("data", (chunk) => {
-			csvText += chunk;
+			csvText += chunk.join(",");
 			console.log(chunk);
 		});
 	} catch (err) {
