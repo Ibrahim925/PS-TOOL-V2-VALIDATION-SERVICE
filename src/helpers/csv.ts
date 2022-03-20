@@ -88,6 +88,8 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 				reordered[field] = row[field];
 			}
 
+			console.log(reordered);
+
 			return Object.values(reordered);
 		});
 
