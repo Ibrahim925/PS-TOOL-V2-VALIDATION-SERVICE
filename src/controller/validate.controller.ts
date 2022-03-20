@@ -92,9 +92,13 @@ export const get_job_status = async (
 		console.log(params);
 
 		try {
-			s3.getObject(params).createReadStream().pipe(res);
+			const csvText = await s3.getObject(params).promise();
+
+			data.payload.csvText = csvText.Body.toString();
 
 			await s3.deleteObject(params).promise();
+
+			res.json(data);
 		} catch (err) {
 			console.log("ERROR AT OUTPUT CSV LOADING", err);
 		}
