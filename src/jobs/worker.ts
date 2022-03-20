@@ -129,8 +129,6 @@ queue.process(async (job) => {
 	const csvJSON = await CSVToJSON(csvText, rules);
 	job.progress(15);
 
-	console.log(csvJSON, "JSONNNN");
-
 	// Validate columns
 	const isColumnsValid = await validateColumns(csvJSON, rules);
 
