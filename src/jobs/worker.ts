@@ -45,11 +45,11 @@ queue.process(async (job) => {
 
 	// console.log(csvText);
 
-	await s3
-		.deleteObject(params, function (err, data) {
-			if (err) console.log("ERROR IN GET OBJECT PHIL");
-		})
-		.promise();
+	try {
+		await s3.deleteObject(params).promise();
+	} catch (err) {
+		console.log(err, "ERROR IN PHIL");
+	}
 
 	// Extract project version
 	const { projectVersion } = await Project.findOne({
