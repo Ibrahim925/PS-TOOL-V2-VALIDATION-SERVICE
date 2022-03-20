@@ -38,7 +38,7 @@ queue.process(async (job) => {
 	await s3
 		.getObject(params, async function (err, data) {
 			if (!err) {
-				data.Body;
+				csvText = data.Body;
 			} else {
 				console.log("ERROR IN GET OBJECT BOB");
 			}
