@@ -41,7 +41,6 @@ queue.process(async (job) => {
 
 		csv.parseStream(csvStream).on("data", (chunk) => {
 			csvText += chunk.join(",") + "\n";
-			console.log(chunk);
 		});
 	} catch (err) {
 		console.log("ERROR IN GET OBJECT BOB", err);
