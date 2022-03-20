@@ -48,6 +48,9 @@ const validateData = async (
 		let rowHasErrors = false; // For counting the number of errored rows
 
 		console.log(i + "/" + length);
+		console.log(
+			process.memoryUsage().heapUsed + "/" + process.memoryUsage().heapTotal
+		);
 
 		// Validate dependency
 		console.log("VALIDIATING DEPENDENCIES");
