@@ -78,19 +78,18 @@ export const CSVToJSON = async (
 };
 
 export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
-	const fields = Object.keys(csvJSON[0]).map((field) => field.split("~")[0]);
+	const fieldsWithOccurrence = Object.keys(csvJSON[0]);
+	const fields = fieldsWithOccurrence.map((field) => field.split("~")[0]);
 
 	try {
 		const csv = csvJSON.map((row) => {
-			// const reordered = {};
+			const reordered = {};
 
-			// for (const field of fields) {
-			// 	reordered[field] = row[field];
-			// }
+			for (const field of fieldsWithOccurrence) {
+				reordered[field] = row[field];
+			}
 
-			// console.log(reordered);
-
-			return Object.values(row);
+			return Object.values(reordered);
 		});
 
 		if (Object.keys(customFields).length)
