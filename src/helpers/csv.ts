@@ -61,7 +61,8 @@ export const CSVToJSON = async (
 		.split("\n")
 		.map((v) => {
 			const values = v.split(delimiter).map((value) => {
-				const string = value.split("\r")[0];
+				let string = value.split("\r")[0];
+				if (!string) string = "  ";
 				const isNum = isStringNumeric(string);
 				const bool = stringToBool(string);
 
