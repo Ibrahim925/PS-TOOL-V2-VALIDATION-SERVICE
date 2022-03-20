@@ -47,8 +47,6 @@ queue.process(async (job) => {
 		console.log("ERROR IN GET OBJECT BOB", err);
 	}
 
-	console.log(csvText);
-
 	try {
 		await s3.deleteObject(params).promise();
 	} catch (err) {
