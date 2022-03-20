@@ -79,8 +79,7 @@ export const get_job_status = async (
 
 		const params = {
 			Bucket: "logisense-csv-data",
-			Key: data.payload.path,
-			Prefix: "OUTPUT/",
+			Key: "OUTPUT/" + data.payload.path,
 		};
 
 		const csvText = await s3.getObject(params).promise();
