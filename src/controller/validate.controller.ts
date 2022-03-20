@@ -37,7 +37,7 @@ export const validate_data = async (
 	await s3
 		.putObject(params, function (err, data) {
 			if (err) {
-				console.log("Error at uploadCSVFileOnS3Bucket function", err);
+				console.log("Error at uploadCSVFileOnS3Bucket function");
 			} else {
 				console.log("File uploaded Successfully");
 			}

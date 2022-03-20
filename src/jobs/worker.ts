@@ -40,14 +40,14 @@ queue.process(async (job) => {
 			if (!err) {
 				csvText = data.Body.toString();
 			} else {
-				console.log("ERROR IN GET OBJECT BOB", err);
+				console.log("ERROR IN GET OBJECT BOB");
 			}
 		})
 		.promise();
 
 	await s3
 		.deleteObject(params, function (err, data) {
-			if (err) console.log("ERROR IN GET OBJECT PHIL", err);
+			if (err) console.log("ERROR IN GET OBJECT PHIL");
 		})
 		.promise();
 
@@ -98,14 +98,12 @@ queue.process(async (job) => {
 						if (!err) {
 							parentCsvText = data.Body.toString();
 						} else {
-							console.log(err);
+							console.log("BOBOBOBOOBOBOBOBOB");
 						}
 					})
 					.promise();
 
 				const parentCsvJson = await CSVToJSON(parentCsvText, rules, ",", false);
-
-				console.log(parentCsvJson, "JFLKJFKLDJFKLDJFKLJDKLSFJKLSDJFDSJJJJJJ");
 
 				return { parentCsvJson, ...object };
 			})
@@ -242,7 +240,7 @@ queue.process(async (job) => {
 
 			await s3
 				.putObject(params, (err, data) => {
-					if (err) console.log("ERROR AT KYLE", err);
+					if (err) console.log("ERROR AT KYLE");
 				})
 				.promise();
 		}
