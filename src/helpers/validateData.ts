@@ -203,8 +203,6 @@ const validateDependencies = async (
 ) => {
 	const errors: Errors = [];
 
-	console.log("VALIDATING DEPENDENCY");
-
 	for (const { field, occurrence, fullField } of fields) {
 		const [rule] = rules.filter(
 			(rule) =>
