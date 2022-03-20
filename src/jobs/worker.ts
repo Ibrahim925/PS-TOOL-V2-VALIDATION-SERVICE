@@ -199,8 +199,8 @@ queue.process(async (job) => {
 
 		// Create notification
 		await createNotification(
-			`${projectName} uploaded ${objectName} with ${totalErrors} error${
-				totalErrors > 1 ? "s" : ""
+			`${projectName} uploaded ${objectName} with ${rows} error${
+				rows > 1 ? "s" : ""
 			}`,
 			projectName,
 			objectName
