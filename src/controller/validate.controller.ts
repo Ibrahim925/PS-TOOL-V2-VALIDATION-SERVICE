@@ -2,16 +2,16 @@ import { CustomRequest, JobData } from "../types";
 import { Response } from "express";
 import validateNewCSV from "../jobs/producer";
 import Queue from "bull";
-import AWS from "aws-sdk";
-import "dotenv/config";
+// import AWS from "aws-sdk";
+// import "dotenv/config";
 
-AWS.config.update({
-	region: "us-east-2",
-	credentials: {
-		accessKeyId: process.env.IAM_ACCESS_KEY,
-		secretAccessKey: process.env.IAM_SECRET_KEY,
-	},
-});
+// AWS.config.update({
+// 	region: "us-east-2",
+// 	credentials: {
+// 		accessKeyId: process.env.IAM_ACCESS_KEY,
+// 		secretAccessKey: process.env.IAM_SECRET_KEY,
+// 	},
+// });
 
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
 
