@@ -40,14 +40,14 @@ queue.process(async (job) => {
 			if (!err) {
 				csvText = data.Body.toString();
 			} else {
-				console.log(err);
+				console.log("ERROR IN GET OBJECT BOB", err);
 			}
 		})
 		.promise();
 
 	await s3
 		.deleteObject(params, function (err, data) {
-			if (err) console.log(err);
+			if (err) console.log("ERROR IN GET OBJECT PHIL", err);
 		})
 		.promise();
 
@@ -242,7 +242,7 @@ queue.process(async (job) => {
 
 			await s3
 				.putObject(params, (err, data) => {
-					if (err) console.log(err);
+					if (err) console.log("ERROR AT KYLE", err);
 				})
 				.promise();
 		}
