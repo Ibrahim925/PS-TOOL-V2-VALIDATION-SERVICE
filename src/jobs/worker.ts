@@ -11,6 +11,7 @@ import { Project } from "../db/entity/Project";
 import { Rule } from "../db/entity/Rule";
 import validateData from "../helpers/validateData";
 import AWS from "aws-sdk";
+import csv from "fast-csv";
 
 AWS.config.update({
 	region: "us-east-2",
@@ -36,9 +37,11 @@ queue.process(async (job) => {
 	let csvText;
 
 	try {
-		const csvToValidateData = await s3.getObject(params).promise();
+		const csvStream = s3.getObject(params).createReadStream();
 
-		csvText = csvToValidateData.Body.toString();
+		csv.parseStream(csvStream).on("data", (chunk) => {
+			csvText += chunk;
+		});
 	} catch (err) {
 		console.log("ERROR IN GET OBJECT BOB", err);
 	}
