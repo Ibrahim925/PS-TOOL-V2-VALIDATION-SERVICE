@@ -82,12 +82,14 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 	const fields = fieldsWithOccurrence.map((field) => field.split("~")[0]);
 
 	try {
-		const csv = csvJSON.map((row) => {
+		const csv = csvJSON.map((row, index) => {
 			const reordered = {};
 
 			for (const field of fieldsWithOccurrence) {
 				reordered[field] = row[field];
 			}
+
+			index === 73 && console.log(reordered, "FDSFD");
 
 			return Object.values(reordered);
 		});
