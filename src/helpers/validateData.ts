@@ -1,5 +1,6 @@
-import { Cases, DataTypes, Errors, Versions } from "../types";
+import { Cases, DataTypes, Errors, JobData, Versions } from "../types";
 import { Rule } from "../db/entity/Rule";
+import Queue from "bull";
 
 interface Field {
 	field: string;
@@ -12,7 +13,8 @@ const validateData = async (
 	csvJSON: any[],
 	rules: Rule[],
 	projectVersion: Versions,
-	allObjects: any
+	allObjects: any,
+	job: Queue.Job<JobData>
 ) => {
 	const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
 		const arr = fullField.split("~");
@@ -25,6 +27,8 @@ const validateData = async (
 			fullField,
 		};
 	});
+
+	let progress = 30;
 
 	const outputCSV = [];
 
@@ -98,6 +102,9 @@ const validateData = async (
 		}
 
 		if (rowHasErrors) errorCount.rows++;
+
+		progress += ((i / length) * 100) / 75;
+		job.progress(progress);
 	}
 
 	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };

@@ -152,7 +152,8 @@ queue.process(async (job) => {
 		csvJSON,
 		rules,
 		projectVersion,
-		allObjects
+		allObjects,
+		job
 	);
 
 	console.log("COMPLETE VALIDATION");
