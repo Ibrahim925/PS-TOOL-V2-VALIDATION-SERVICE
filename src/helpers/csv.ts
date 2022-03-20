@@ -82,7 +82,15 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 	const fields = Object.keys(csvJSON[0]).map((field) => field.split("~")[0]);
 
 	try {
-		const csv = csvJSON.map((row) => Object.values(row));
+		const csv = csvJSON.map((row) => {
+			const reordered = {};
+
+			for (const field of fields) {
+				reordered[field] = row[field];
+			}
+
+			return Object.values(reordered);
+		});
 
 		if (Object.keys(customFields).length)
 			for (let i = 0, len = fields.length; i < len; i++) {
