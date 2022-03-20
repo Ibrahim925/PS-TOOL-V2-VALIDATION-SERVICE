@@ -207,11 +207,21 @@ queue.process(async (job) => {
 
 		job.progress(99);
 
+		// Add output to bucket
+		const path = `${projectName} - ${rules[0].ruleObject} Output - ${day}.csv`;
+
+		const params = {
+			Bucket: "logisense-csv-data",
+			Key: `OUTPUT/${path}`,
+			Body: csvText,
+		};
+
+		await s3.putObject(params).promise();
+
 		// Sends CSV data with file path. The actual file will be downloaded to the client on the frontend
 		return {
 			payload: {
-				csvText,
-				path: `${rules[0].ruleObject} Output - ${day}.csv`,
+				path,
 			},
 			errorCount: rows,
 		};
@@ -236,20 +246,26 @@ queue.process(async (job) => {
 				Body: csvText,
 			};
 
-			await s3
-				.putObject(params, (err, data) => {
-					if (err) console.log("ERROR AT KYLE");
-				})
-				.promise();
+			await s3.putObject(params).promise();
 		}
+
+		// Add output to bucket
+		const path = `${projectName} - ${rules[0].ruleObject}.csv`;
+
+		const params = {
+			Bucket: "logisense-csv-data",
+			Key: `OUTPUT/${path}`,
+			Body: csvText,
+		};
+
+		await s3.putObject(params).promise();
 
 		job.progress(99);
 
 		return {
 			success: true,
 			payload: {
-				csvText,
-				path: `${rules[0].ruleObject}.csv`,
+				path,
 			},
 		};
 	}

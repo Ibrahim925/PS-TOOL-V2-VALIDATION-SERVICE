@@ -2,7 +2,7 @@ import { CustomRequest, JobData } from "../types";
 import { Response } from "express";
 import validateNewCSV from "../jobs/producer";
 import Queue from "bull";
-import AWS from "aws-sdk";
+import AWS, { S3 } from "aws-sdk";
 import "dotenv/config";
 
 AWS.config.update({
@@ -73,7 +73,21 @@ export const get_job_status = async (
 	} else {
 		const data = await job.finished();
 
+		const s3 = new S3();
+
 		job.remove();
+
+		const params = {
+			Bucket: "logisense-csv-data",
+			Key: data.payload.path,
+			Prefix: "OUTPUT/",
+		};
+
+		const csvText = await s3.getObject(params).promise();
+
+		data.csvText = csvText.Body.toString();
+
+		await s3.deleteObject(params).promise();
 
 		res.json(data);
 	}
