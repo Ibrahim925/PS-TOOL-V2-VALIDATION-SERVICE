@@ -45,6 +45,8 @@ queue.process(async (job) => {
 		})
 		.promise();
 
+	console.log(csvText);
+
 	await s3
 		.deleteObject(params, function (err, data) {
 			if (err) console.log("ERROR IN GET OBJECT PHIL");
