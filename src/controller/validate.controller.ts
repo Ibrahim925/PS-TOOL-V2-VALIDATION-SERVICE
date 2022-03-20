@@ -16,7 +16,7 @@ AWS.config.update({
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
 
 interface ValidateDataBody {
-	csvText: string;
+	file: Buffer;
 	projectName: string;
 	objectName: string;
 }
@@ -25,31 +25,35 @@ export const validate_data = async (
 	req: CustomRequest<{}, ValidateDataBody, {}>,
 	res: Response
 ) => {
-	const { csvText, projectName, objectName } = req.body;
+	const { file, projectName, objectName } = req.body;
 
-	const s3 = new AWS.S3();
-	const params = {
-		Bucket: "logisense-csv-data",
-		Key: `VALIDATE/${projectName}-${objectName}.csv`,
-		Body: csvText,
-	};
+	console.log(file);
 
-	await s3
-		.putObject(params, function (err, data) {
-			if (err) {
-				console.log("Error at uploadCSVFileOnS3Bucket function", err);
-			} else {
-				console.log("File uploaded Successfully");
-			}
-		})
-		.promise();
+	res.send(200);
 
-	const job = await validateNewCSV({
-		projectName,
-		objectName,
-	});
+	// const s3 = new AWS.S3();
+	// const params = {
+	// 	Bucket: "logisense-csv-data",
+	// 	Key: `VALIDATE/${projectName}-${objectName}.csv`,
+	// 	Body: csvText,
+	// };
 
-	res.json(job.id);
+	// await s3
+	// 	.putObject(params, function (err, data) {
+	// 		if (err) {
+	// 			console.log("Error at uploadCSVFileOnS3Bucket function", err);
+	// 		} else {
+	// 			console.log("File uploaded Successfully");
+	// 		}
+	// 	})
+	// 	.promise();
+
+	// const job = await validateNewCSV({
+	// 	projectName,
+	// 	objectName,
+	// });
+
+	// res.json(job.id);
 };
 
 interface GetJobStatusParams {
