@@ -35,15 +35,13 @@ queue.process(async (job) => {
 
 	let csvText;
 
-	await s3
-		.getObject(params, async function (err, data) {
-			if (!err) {
-				csvText = data.Body.toString();
-			} else {
-				console.log("ERROR IN GET OBJECT BOB", err);
-			}
-		})
-		.promise();
+	try {
+		const csvToValidateData = await s3.getObject(params).promise();
+
+		csvText = csvToValidateData.Body.toString();
+	} catch (err) {
+		console.log("ERROR IN GET OBJECT BOB", err);
+	}
 
 	// console.log(csvText);
 
@@ -95,15 +93,13 @@ queue.process(async (job) => {
 					Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
 				};
 
-				await s3
-					.getObject(params, async function (err, data) {
-						if (!err) {
-							parentCsvText = data.Body.toString();
-						} else {
-							console.log("BOBOBOBOOBOBOBOBOB", err);
-						}
-					})
-					.promise();
+				try {
+					const parentData = await s3.getObject(params).promise();
+
+					parentCsvText = parentData.Body.toString();
+				} catch (err) {
+					console.log("BOBOBOBOOBOBOBOBOB", err);
+				}
 
 				const parentCsvJson = await CSVToJSON(parentCsvText, rules, ",", false);
 
