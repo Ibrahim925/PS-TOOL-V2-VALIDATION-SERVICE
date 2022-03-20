@@ -40,12 +40,12 @@ queue.process(async (job) => {
 			if (!err) {
 				csvText = data.Body.toString();
 			} else {
-				console.log("ERROR IN GET OBJECT BOB");
+				console.log("ERROR IN GET OBJECT BOB", err);
 			}
 		})
 		.promise();
 
-	console.log(csvText);
+	// console.log(csvText);
 
 	await s3
 		.deleteObject(params, function (err, data) {
