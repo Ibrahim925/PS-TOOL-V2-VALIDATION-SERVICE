@@ -1,4 +1,5 @@
 import { Rule } from "../db/entity/Rule";
+import { AsyncParser } from "json2csv";
 
 const isStringNumeric = (str: string) => {
 	if (!str) return false;
@@ -79,32 +80,43 @@ export const CSVToJSON = async (
 
 export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 	const fieldsWithOccurrence = Object.keys(csvJSON[0]);
-	const fields = fieldsWithOccurrence.map((field) => field.split("~")[0]);
 
-	try {
-		const csv = csvJSON.map((row, index) => {
-			const reordered = {};
+	// const csv = csvJSON.map((row, index) => {
+	// 	const reordered = {};
 
-			for (const field of fieldsWithOccurrence) {
-				reordered[field] = `\"${row[field]}\"`;
-			}
+	// 	for (const field of fieldsWithOccurrence) {
+	// 		reordered[field] = `\"${row[field]}\"`;
+	// 	}
 
-			index === 73 && console.log(Object.values(reordered), "FDSFD");
-			index === 73 && console.log("-----------------");
-			index === 73 && console.log(reordered, "BOBOBOBOjjjjj");
+	// 	index === 73 && console.log(Object.values(reordered), "FDSFD");
+	// 	index === 73 && console.log("-----------------");
+	// 	index === 73 && console.log(reordered, "BOBOBOBOjjjjj");
 
-			return Object.values(reordered);
-		});
+	// 	return Object.values(reordered);
+	// });
 
-		if (Object.keys(customFields).length)
-			for (let i = 0, len = fields.length; i < len; i++) {
-				fields[i] = customFields[fields[i]];
-			}
+	// if (Object.keys(customFields).length)
+	// 	for (let i = 0, len = fields.length; i < len; i++) {
+	// 		fields[i] = customFields[fields[i]];
+	// 	}
 
-		csv.unshift(fields);
+	// csv.unshift(fields);
 
-		return csv.join("\n");
-	} catch (error) {
-		console.error(error);
-	}
+	// return csv.join("\n");
+
+	const fields = fieldsWithOccurrence.map((field) => ({
+		label: field,
+		value: field.split("~")[0],
+	}));
+	const opts = { fields };
+
+	const asyncParser = new AsyncParser(opts);
+
+	let csv = "";
+	asyncParser.processor
+		.on("data", (chunk) => (csv += chunk.toString()))
+		.on("end", () => console.log(csv))
+		.on("error", (err) => console.error(err));
+
+	return csv;
 };
