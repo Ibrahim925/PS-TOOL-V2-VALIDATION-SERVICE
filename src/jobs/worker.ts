@@ -100,7 +100,7 @@ queue.process(async (job) => {
 						if (!err) {
 							parentCsvText = data.Body.toString();
 						} else {
-							console.log("BOBOBOBOOBOBOBOBOB");
+							console.log("BOBOBOBOOBOBOBOBOB", err);
 						}
 					})
 					.promise();
