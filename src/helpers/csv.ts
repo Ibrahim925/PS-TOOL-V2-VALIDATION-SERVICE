@@ -1,5 +1,5 @@
 import { Rule } from "../db/entity/Rule";
-import { AsyncParser } from "json2csv";
+import { parseAsync } from "json2csv";
 
 const isStringNumeric = (str: string) => {
 	if (!str) return false;
@@ -108,15 +108,12 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 		label: field,
 		value: field.split("~")[0],
 	}));
+
 	const opts = { fields };
 
-	const asyncParser = new AsyncParser(opts);
+	const csv = await parseAsync(csvJSON, opts);
 
-	let csv = "";
-	asyncParser.processor
-		.on("data", (chunk) => (csv += chunk.toString()))
-		.on("end", () => console.log(csv))
-		.on("error", (err) => console.error(err));
+	console.log(csv);
 
 	return csv;
 };
