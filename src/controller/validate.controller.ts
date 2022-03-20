@@ -73,6 +73,8 @@ export const get_job_status = async (
 	} else {
 		const data = await job.finished();
 
+		job.remove();
+
 		res.json(data);
 	}
 };
