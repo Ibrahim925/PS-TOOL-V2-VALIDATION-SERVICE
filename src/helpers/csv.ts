@@ -86,7 +86,7 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 			const reordered = {};
 
 			for (const field of fieldsWithOccurrence) {
-				reordered[field] = row[field];
+				reordered[field] = `\"${row[field]}\"`;
 			}
 
 			index === 73 && console.log(Object.values(reordered), "FDSFD");
