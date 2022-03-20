@@ -10,22 +10,22 @@ import { getDay } from "../helpers/getNow";
 import { Project } from "../db/entity/Project";
 import { Rule } from "../db/entity/Rule";
 import validateData from "../helpers/validateData";
-// import AWS from "aws-sdk";
+import AWS from "aws-sdk";
 
-// AWS.config.update({
-// 	region: "us-east-2",
-// 	credentials: {
-// 		accessKeyId: process.env.IAM_ACCESS_KEY,
-// 		secretAccessKey: process.env.IAM_SECRET_KEY,
-// 	},
-// });
+AWS.config.update({
+	region: "us-east-2",
+	credentials: {
+		accessKeyId: process.env.IAM_ACCESS_KEY,
+		secretAccessKey: process.env.IAM_SECRET_KEY,
+	},
+});
 
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
 
 queue.process(async (job) => {
 	const { objectName, projectName } = job.data;
 
-	// const s3 = new AWS.S3();
+	const s3 = new AWS.S3();
 
 	// Get CSV data to validate from S3 bucket
 	const params = {
@@ -35,21 +35,21 @@ queue.process(async (job) => {
 
 	let csvText;
 
-	// await s3
-	// 	.getObject(params, async function (err, data) {
-	// 		if (!err) {
-	// 			csvText = data.Body.toString();
-	// 		} else {
-	// 			console.log(err);
-	// 		}
-	// 	})
-	// 	.promise();
+	await s3
+		.getObject(params, async function (err, data) {
+			if (!err) {
+				csvText = data.Body.toString();
+			} else {
+				console.log(err);
+			}
+		})
+		.promise();
 
-	// await s3
-	// 	.deleteObject(params, function (err, data) {
-	// 		if (err) console.log(err);
-	// 	})
-	// 	.promise();
+	await s3
+		.deleteObject(params, function (err, data) {
+			if (err) console.log(err);
+		})
+		.promise();
 
 	// Extract project version
 	const { projectVersion } = await Project.findOne({
@@ -69,10 +69,9 @@ queue.process(async (job) => {
 	const rules = allRules.filter((rule) => rule.ruleObject === objectName);
 
 	// Check if all parent objects have been uploaded already
-	// const data = await s3
-	// 	.listObjectsV2({ Bucket: "logisense-csv-data", Prefix: "PARENT/" })
-	// 	.promise();
-	const data = { Contents: [] };
+	const data = await s3
+		.listObjectsV2({ Bucket: "logisense-csv-data", Prefix: "PARENT/" })
+		.promise();
 
 	const allObjects = await Promise.all(
 		data.Contents.map(({ Key }) => {
@@ -94,15 +93,15 @@ queue.process(async (job) => {
 					Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
 				};
 
-				// await s3
-				// 	.getObject(params, async function (err, data) {
-				// 		if (!err) {
-				// 			parentCsvText = data.Body.toString();
-				// 		} else {
-				// 			console.log(err);
-				// 		}
-				// 	})
-				// 	.promise();
+				await s3
+					.getObject(params, async function (err, data) {
+						if (!err) {
+							parentCsvText = data.Body.toString();
+						} else {
+							console.log(err);
+						}
+					})
+					.promise();
 
 				const parentCsvJson = await CSVToJSON(parentCsvText, rules, ",", false);
 
@@ -241,11 +240,11 @@ queue.process(async (job) => {
 				Body: csvText,
 			};
 
-			// await s3
-			// 	.putObject(params, (err, data) => {
-			// 		if (err) console.log(err);
-			// 	})
-			// 	.promise();
+			await s3
+				.putObject(params, (err, data) => {
+					if (err) console.log(err);
+				})
+				.promise();
 		}
 
 		job.progress(99);
