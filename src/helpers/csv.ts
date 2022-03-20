@@ -90,7 +90,5 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 
 	const csv = await parseAsync(csvJSON, opts);
 
-	console.log(csv);
-
 	return csv;
 };
