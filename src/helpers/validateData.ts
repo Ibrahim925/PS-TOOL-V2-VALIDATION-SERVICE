@@ -47,7 +47,7 @@ const validateData = async (
 		const row = newRow;
 		let rowHasErrors = false; // For counting the number of errored rows
 
-		console.log(i);
+		console.log(i + "/" + length);
 
 		// Validate dependency
 		console.log("VALIDIATING DEPENDENCIES");
