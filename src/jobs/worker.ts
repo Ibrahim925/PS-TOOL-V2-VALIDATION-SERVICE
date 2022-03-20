@@ -37,12 +37,6 @@ queue.process(async (job) => {
 	let csvText = "";
 
 	try {
-		// const csvStream = s3.getObject(params).createReadStream();
-
-		// csv.parseStream(csvStream).on("data", (chunk) => {
-		// 	csvText += chunk.join(",") + "\n";
-		// });
-
 		const csv = await s3.getObject(params).promise();
 
 		csvText = csv.Body.toString();

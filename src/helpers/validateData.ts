@@ -16,106 +16,103 @@ const validateData = async (
 	allObjects: any,
 	job: Queue.Job<JobData>
 ) => {
-	// const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
-	// 	const arr = fullField.split("~");
-	// 	const field = arr[0];
-	// 	const occurrence = Number(arr[1]);
+	const fields: Field[] = Object.keys(csvJSON[0]).map((fullField) => {
+		const arr = fullField.split("~");
+		const field = arr[0];
+		const occurrence = Number(arr[1]);
 
-	// 	return {
-	// 		field,
-	// 		occurrence,
-	// 		fullField,
-	// 	};
-	// });
+		return {
+			field,
+			occurrence,
+			fullField,
+		};
+	});
 
-	// let progress = 30;
+	let progress = 30;
 
-	// const outputCSV = [];
+	const outputCSV = [];
 
-	// let errorCount = {
-	// 	dependency: 0, // 001
-	// 	existence: 0, // 002
-	// 	dataType: 0, // 003
-	// 	rows: 0,
-	// };
-
-	// for (let i = 0, length = csvJSON.length; i < length; i++) {
-	// 	// Clean data
-	// 	const newRow = cleanData(csvJSON[i], projectVersion, fields, rules);
-	// 	const rowNumber = i + 2;
-	// 	csvJSON[i] = newRow;
-	// 	const row = newRow;
-	// 	let rowHasErrors = false; // For counting the number of errored rows
-
-	// 	i === 6 && console.log(i);
-
-	// 	// Validate dependency
-	// 	// const dependencyErrors = await validateDependencies(
-	// 	// 	row,
-	// 	// 	rules,
-	// 	// 	fields,
-	// 	// 	allObjects
-	// 	// );
-
-	// 	// if (dependencyErrors.errorCount) {
-	// 	// 	for (const error of dependencyErrors.payload.errors) {
-	// 	// 		outputCSV.push({
-	// 	// 			...csvJSON[i],
-	// 	// 			Error: error.message,
-	// 	// 			"Row Number": rowNumber,
-	// 	// 			"Error Type": "DEPENDENCY",
-	// 	// 		});
-	// 	// 	}
-
-	// 	// 	errorCount.dependency = dependencyErrors.errorCount;
-	// 	// 	rowHasErrors = true;
-	// 	// }
-
-	// 	// Validate existence
-	// 	const existenceErrors = validateDataExistence(row, rules, fields);
-	// 	if (existenceErrors.errorCount) {
-	// 		for (const error of existenceErrors.payload.errors) {
-	// 			outputCSV.push({
-	// 				...csvJSON[i],
-	// 				Error: error.message,
-	// 				"Row Number": rowNumber,
-	// 				"Error Type": "MISSING DATA",
-	// 			});
-	// 		}
-
-	// 		errorCount.existence += existenceErrors.errorCount;
-	// 		rowHasErrors = true;
-	// 	}
-
-	// 	// Validate Datatype
-	// 	const dataTypeErrors = validateDataType(row, rules, fields);
-	// 	if (dataTypeErrors.errorCount) {
-	// 		for (const error of dataTypeErrors.payload.errors) {
-	// 			outputCSV.push({
-	// 				...csvJSON[i],
-	// 				Error: error.message,
-	// 				"Row Number": rowNumber,
-	// 				"Error Type": "DATA TYPE",
-	// 			});
-	// 		}
-
-	// 		errorCount.dataType += dataTypeErrors.errorCount;
-	// 		rowHasErrors = true;
-	// 	}
-
-	// 	if (rowHasErrors) errorCount.rows++;
-
-	// 	progress += (i / length) * 75;
-	// 	// job.progress(progress);
-	// }
-
-	// return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
-
-	return {
-		outputCsvJSON: csvJSON,
-		exportCsvJSON: csvJSON,
-		errorCount: { dependency: 5, existence: 5, dataType: 8, rows: 43 },
+	let errorCount = {
+		dependency: 0, // 001
+		existence: 0, // 002
+		dataType: 0, // 003
+		rows: 0,
 	};
+
+	for (let i = 0, length = csvJSON.length; i < length; i++) {
+		// Clean data
+		const newRow = cleanData(csvJSON[i], projectVersion, fields, rules);
+		const rowNumber = i + 2;
+		csvJSON[i] = newRow;
+		const row = newRow;
+		let rowHasErrors = false; // For counting the number of errored rows
+
+		console.log(i);
+
+		// Validate dependency
+		console.log("VALIDIATING DEPENDENCIES");
+		const dependencyErrors = await validateDependencies(
+			row,
+			rules,
+			fields,
+			allObjects
+		);
+
+		if (dependencyErrors.errorCount) {
+			for (const error of dependencyErrors.payload.errors) {
+				outputCSV.push({
+					...csvJSON[i],
+					Error: error.message,
+					"Row Number": rowNumber,
+					"Error Type": "DEPENDENCY",
+				});
+			}
+
+			errorCount.dependency = dependencyErrors.errorCount;
+			rowHasErrors = true;
+		}
+
+		// Validate existence
+		console.log("EXISTENCE");
+		const existenceErrors = validateDataExistence(row, rules, fields);
+		if (existenceErrors.errorCount) {
+			for (const error of existenceErrors.payload.errors) {
+				outputCSV.push({
+					...csvJSON[i],
+					Error: error.message,
+					"Row Number": rowNumber,
+					"Error Type": "MISSING DATA",
+				});
+			}
+
+			errorCount.existence += existenceErrors.errorCount;
+			rowHasErrors = true;
+		}
+
+		// Validate Datatype
+		console.log("VALIDATING DATATYPE");
+		const dataTypeErrors = validateDataType(row, rules, fields);
+		if (dataTypeErrors.errorCount) {
+			for (const error of dataTypeErrors.payload.errors) {
+				outputCSV.push({
+					...csvJSON[i],
+					Error: error.message,
+					"Row Number": rowNumber,
+					"Error Type": "DATA TYPE",
+				});
+			}
+
+			errorCount.dataType += dataTypeErrors.errorCount;
+			rowHasErrors = true;
+		}
+
+		if (rowHasErrors) errorCount.rows++;
+
+		progress += (i / length) * 75;
+		job.progress(progress);
+	}
+
+	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
