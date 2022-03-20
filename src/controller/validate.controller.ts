@@ -3,7 +3,6 @@ import { Response } from "express";
 import validateNewCSV from "../jobs/producer";
 import Queue from "bull";
 import AWS from "aws-sdk";
-import fs from "fs";
 import "dotenv/config";
 
 AWS.config.update({
@@ -17,7 +16,7 @@ AWS.config.update({
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
 
 interface ValidateDataBody {
-	file: Buffer;
+	csvText: string;
 	projectName: string;
 	objectName: string;
 }
@@ -26,39 +25,31 @@ export const validate_data = async (
 	req: CustomRequest<{}, ValidateDataBody, {}>,
 	res: Response
 ) => {
-	const { file, projectName, objectName } = req.body;
+	const { csvText, projectName, objectName } = req.body;
 
-	res.sendStatus(200);
+	const s3 = new AWS.S3();
+	const params = {
+		Bucket: "logisense-csv-data",
+		Key: `VALIDATE/${projectName}-${objectName}.csv`,
+		Body: csvText,
+	};
 
-	const readStream = fs.createReadStream(file);
+	await s3
+		.putObject(params, function (err, data) {
+			if (err) {
+				console.log("Error at uploadCSVFileOnS3Bucket function", err);
+			} else {
+				console.log("File uploaded Successfully");
+			}
+		})
+		.promise();
 
-	readStream.on("data", (chunk) => {
-		console.log(chunk);
+	const job = await validateNewCSV({
+		projectName,
+		objectName,
 	});
 
-	// const s3 = new AWS.S3();
-	// const params = {
-	// 	Bucket: "logisense-csv-data",
-	// 	Key: `VALIDATE/${projectName}-${objectName}.csv`,
-	// 	Body: csvText,
-	// };
-
-	// await s3
-	// 	.putObject(params, function (err, data) {
-	// 		if (err) {
-	// 			console.log("Error at uploadCSVFileOnS3Bucket function", err);
-	// 		} else {
-	// 			console.log("File uploaded Successfully");
-	// 		}
-	// 	})
-	// 	.promise();
-
-	// const job = await validateNewCSV({
-	// 	projectName,
-	// 	objectName,
-	// });
-
-	// res.json(job.id);
+	res.json(job.id);
 };
 
 interface GetJobStatusParams {
