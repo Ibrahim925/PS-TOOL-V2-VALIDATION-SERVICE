@@ -30,7 +30,7 @@ const validateData = async (
 
 	let progress = 30;
 
-	const outputCSV = [];
+	// const outputCSV = [];
 
 	let errorCount = {
 		dependency: 0, // 001
@@ -59,14 +59,14 @@ const validateData = async (
 		);
 
 		if (dependencyErrors.errorCount) {
-			for (const error of dependencyErrors.payload.errors) {
-				outputCSV.push({
-					...csvJSON[i],
-					Error: error.message,
-					"Row Number": rowNumber,
-					"Error Type": "DEPENDENCY",
-				});
-			}
+			// for (const error of dependencyErrors.payload.errors) {
+			// 	outputCSV.push({
+			// 		...csvJSON[i],
+			// 		Error: error.message,
+			// 		"Row Number": rowNumber,
+			// 		"Error Type": "DEPENDENCY",
+			// 	});
+			// }
 
 			errorCount.dependency = dependencyErrors.errorCount;
 			rowHasErrors = true;
@@ -76,14 +76,14 @@ const validateData = async (
 		console.log("EXISTENCE");
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
-			for (const error of existenceErrors.payload.errors) {
-				outputCSV.push({
-					...csvJSON[i],
-					Error: error.message,
-					"Row Number": rowNumber,
-					"Error Type": "MISSING DATA",
-				});
-			}
+			// for (const error of existenceErrors.payload.errors) {
+			// 	outputCSV.push({
+			// 		...csvJSON[i],
+			// 		Error: error.message,
+			// 		"Row Number": rowNumber,
+			// 		"Error Type": "MISSING DATA",
+			// 	});
+			// }
 
 			errorCount.existence += existenceErrors.errorCount;
 			rowHasErrors = true;
@@ -93,14 +93,14 @@ const validateData = async (
 		console.log("VALIDATING DATATYPE");
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
-			for (const error of dataTypeErrors.payload.errors) {
-				outputCSV.push({
-					...csvJSON[i],
-					Error: error.message,
-					"Row Number": rowNumber,
-					"Error Type": "DATA TYPE",
-				});
-			}
+			// for (const error of dataTypeErrors.payload.errors) {
+			// 	outputCSV.push({
+			// 		...csvJSON[i],
+			// 		Error: error.message,
+			// 		"Row Number": rowNumber,
+			// 		"Error Type": "DATA TYPE",
+			// 	});
+			// }
 
 			errorCount.dataType += dataTypeErrors.errorCount;
 			rowHasErrors = true;
@@ -112,7 +112,7 @@ const validateData = async (
 		job.progress(progress);
 	}
 
-	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
+	return { outputCsvJSON: csvJSON, exportCsvJSON: csvJSON, errorCount };
 };
 
 // Clean (remove whitespace, remove special characters -- ONLY FOR V9)
