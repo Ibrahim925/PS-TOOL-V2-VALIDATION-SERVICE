@@ -90,6 +90,8 @@ export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
 			}
 
 			index === 73 && console.log(Object.values(reordered), "FDSFD");
+			index === 73 && console.log("-----------------");
+			index === 73 && console.log(reordered, "BOBOBOBOjjjjj");
 
 			return Object.values(reordered);
 		});
