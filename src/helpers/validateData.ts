@@ -103,7 +103,7 @@ const validateData = async (
 
 		if (rowHasErrors) errorCount.rows++;
 
-		progress += ((i / length) * 100) / 75;
+		progress += (i / length) * 75;
 		job.progress(progress);
 	}
 
