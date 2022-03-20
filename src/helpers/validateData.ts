@@ -50,26 +50,26 @@ const validateData = async (
 		i % 5 === 0 && console.log(i);
 
 		// Validate dependency
-		const dependencyErrors = await validateDependencies(
-			row,
-			rules,
-			fields,
-			allObjects
-		);
+		// const dependencyErrors = await validateDependencies(
+		// 	row,
+		// 	rules,
+		// 	fields,
+		// 	allObjects
+		// );
 
-		if (dependencyErrors.errorCount) {
-			for (const error of dependencyErrors.payload.errors) {
-				outputCSV.push({
-					...csvJSON[i],
-					Error: error.message,
-					"Row Number": rowNumber,
-					"Error Type": "DEPENDENCY",
-				});
-			}
+		// if (dependencyErrors.errorCount) {
+		// 	for (const error of dependencyErrors.payload.errors) {
+		// 		outputCSV.push({
+		// 			...csvJSON[i],
+		// 			Error: error.message,
+		// 			"Row Number": rowNumber,
+		// 			"Error Type": "DEPENDENCY",
+		// 		});
+		// 	}
 
-			errorCount.dependency = dependencyErrors.errorCount;
-			rowHasErrors = true;
-		}
+		// 	errorCount.dependency = dependencyErrors.errorCount;
+		// 	rowHasErrors = true;
+		// }
 
 		// Validate existence
 		const existenceErrors = validateDataExistence(row, rules, fields);
@@ -216,8 +216,6 @@ const validateDependencies = async (
 		const parentFieldData = allObjects
 			.filter((object) => object.objectName === parentObject)[0]
 			.parentCsvJson.map((row) => row[parentField]);
-
-		console.log(parentFieldData, "FJFJFJFJJF");
 
 		if (!parentFieldData.includes(data))
 			errors.push({
