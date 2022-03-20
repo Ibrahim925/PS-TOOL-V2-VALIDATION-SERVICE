@@ -35,11 +35,15 @@ queue.process(async (job) => {
 
 	let csvText;
 
-	let readStream = s3.getObject(params).createReadStream();
-
-	readStream.on("data", (chunk) => {
-		csvText += chunk;
-	});
+	await s3
+		.getObject(params, async function (err, data) {
+			if (!err) {
+				data.Body;
+			} else {
+				console.log("ERROR IN GET OBJECT BOB");
+			}
+		})
+		.promise();
 
 	await s3
 		.deleteObject(params, function (err, data) {
@@ -89,11 +93,15 @@ queue.process(async (job) => {
 					Key: `PARENT/${object.objectProject}-${object.objectName}.csv`,
 				};
 
-				let readStream = s3.getObject(params).createReadStream();
-
-				readStream.on("data", (chunk) => {
-					parentCsvText += chunk;
-				});
+				await s3
+					.getObject(params, async function (err, data) {
+						if (!err) {
+							parentCsvText = data.Body.toString();
+						} else {
+							console.log("BOBOBOBOOBOBOBOBOB");
+						}
+					})
+					.promise();
 
 				const parentCsvJson = await CSVToJSON(parentCsvText, rules, ",", false);
 
