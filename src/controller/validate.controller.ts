@@ -6,13 +6,13 @@ import AWS from "aws-sdk";
 import fs from "fs";
 import "dotenv/config";
 
-// AWS.config.update({
-// 	region: "us-east-2",
-// 	credentials: {
-// 		accessKeyId: process.env.IAM_ACCESS_KEY,
-// 		secretAccessKey: process.env.IAM_SECRET_KEY,
-// 	},
-// });
+AWS.config.update({
+	region: "us-east-2",
+	credentials: {
+		accessKeyId: process.env.IAM_ACCESS_KEY,
+		secretAccessKey: process.env.IAM_SECRET_KEY,
+	},
+});
 
 const queue = new Queue<JobData>("validation", process.env.REDIS_URL);
 
@@ -30,7 +30,11 @@ export const validate_data = async (
 
 	res.sendStatus(200);
 
-	fs.createReadStream(file);
+	const readStream = fs.createReadStream(file);
+
+	readStream.on("data", (chunk) => {
+		console.log(chunk);
+	});
 
 	// const s3 = new AWS.S3();
 	// const params = {
