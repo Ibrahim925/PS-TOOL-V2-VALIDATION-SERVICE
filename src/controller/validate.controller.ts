@@ -35,15 +35,13 @@ export const validate_data = async (
 		Body: csvText,
 	};
 
-	await s3
-		.putObject(params, function (err, data) {
-			if (err) {
-				console.log("Error at uploadCSVFileOnS3Bucket function");
-			} else {
-				console.log("File uploaded Successfully");
-			}
-		})
-		.promise();
+	try {
+		await s3.upload(params).promise();
+		console.log("File uploaded to S3 successfully");
+	} catch (err) {
+		console.log("ERROR WHILE UPLOADING FILE");
+		console.error(err);
+	}
 
 	const job = await validateNewCSV({
 		projectName,
