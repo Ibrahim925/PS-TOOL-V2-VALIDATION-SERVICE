@@ -51,6 +51,7 @@ const validateData = async (
 		console.log(
 			process.memoryUsage().heapUsed + "/" + process.memoryUsage().heapTotal
 		);
+		console.log(row);
 
 		// Validate dependency
 		console.log("VALIDIATING DEPENDENCIES");
