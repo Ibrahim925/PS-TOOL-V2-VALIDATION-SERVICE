@@ -34,13 +34,14 @@ queue.process(async (job) => {
 		Key: `VALIDATE/${projectName}-${objectName}.csv`,
 	};
 
-	let csvText;
+	let csvText = "";
 
 	try {
 		const csvStream = s3.getObject(params).createReadStream();
 
 		csv.parseStream(csvStream).on("data", (chunk) => {
 			csvText += chunk;
+			console.log(chunk);
 		});
 	} catch (err) {
 		console.log("ERROR IN GET OBJECT BOB", err);
