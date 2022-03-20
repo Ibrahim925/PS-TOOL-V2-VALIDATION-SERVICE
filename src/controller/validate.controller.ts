@@ -27,7 +27,7 @@ export const validate_data = async (
 ) => {
 	const { file, projectName, objectName } = req.body;
 
-	console.log(file);
+	console.log(typeof file);
 
 	res.sendStatus(200);
 
