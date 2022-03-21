@@ -24,12 +24,8 @@ export const CSVToJSON = async (
 	rules: Rule[],
 	delimiter = ",",
 	includeOccurence = true
-): Promise<any> => {
-	const csvJSON = [];
-
-	csv({ output: "json" })
-		.fromString(data)
-		.then((row) => csvJSON.push(row));
+) => {
+	const csvJSON = await csv({ output: "json" }).fromString(data);
 
 	console.log(csvJSON, "FKLSDFJKLSD");
 
