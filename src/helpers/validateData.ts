@@ -28,8 +28,6 @@ const validateData = async (
 		};
 	});
 
-	let progress = 30;
-
 	const outputCSV = [];
 
 	let errorCount = {
@@ -103,8 +101,7 @@ const validateData = async (
 
 		if (rowHasErrors) errorCount.rows++;
 
-		progress += i / length;
-		job.progress(progress * 100);
+		job.progress((i / length) * 100);
 	}
 
 	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
