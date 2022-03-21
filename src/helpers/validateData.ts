@@ -303,7 +303,6 @@ const validateDataType = (row, rules: Rule[], fields: Field[]) => {
 					});
 				}
 				break;
-			case DataTypes.Nvarchar:
 			case DataTypes.String:
 				if (dataType !== "STRING") {
 					errors.push({
