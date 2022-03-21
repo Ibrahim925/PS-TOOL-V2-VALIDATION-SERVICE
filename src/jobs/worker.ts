@@ -145,9 +145,7 @@ queue.process(async (job) => {
 
 	// Validate data
 	console.log("Beginning data validation");
-	console.log(
-		process.memoryUsage().heapUsed + "/" + process.memoryUsage().heapTotal
-	);
+
 	const { outputCsvJSON, errorCount, exportCsvJSON } = await validateData(
 		csvJSON,
 		rules,

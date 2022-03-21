@@ -47,14 +47,7 @@ const validateData = async (
 		const row = newRow;
 		let rowHasErrors = false; // For counting the number of errored rows
 
-		console.log(i + "/" + length);
-		console.log(
-			process.memoryUsage().heapUsed + "/" + process.memoryUsage().heapTotal
-		);
-		console.log(row);
-
 		// Validate dependency
-		console.log("VALIDIATING DEPENDENCIES");
 		const dependencyErrors = await validateDependencies(
 			row,
 			rules,
@@ -77,7 +70,6 @@ const validateData = async (
 		}
 
 		// Validate existence
-		console.log("EXISTENCE");
 		const existenceErrors = validateDataExistence(row, rules, fields);
 		if (existenceErrors.errorCount) {
 			for (const error of existenceErrors.payload.errors) {
@@ -94,7 +86,6 @@ const validateData = async (
 		}
 
 		// Validate Datatype
-		console.log("VALIDATING DATATYPE");
 		const dataTypeErrors = validateDataType(row, rules, fields);
 		if (dataTypeErrors.errorCount) {
 			for (const error of dataTypeErrors.payload.errors) {
@@ -112,8 +103,8 @@ const validateData = async (
 
 		if (rowHasErrors) errorCount.rows++;
 
-		progress += (i / length) * 100;
-		job.progress(progress);
+		progress += i / length;
+		job.progress(progress * 100);
 	}
 
 	return { outputCsvJSON: outputCSV, exportCsvJSON: csvJSON, errorCount };
