@@ -51,9 +51,9 @@ export const CSVToJSON = async (
 		// Get object Occurrence
 		if (!rule && includeOccurence) continue;
 		if (includeOccurence) {
-			titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+			titles.push(`${title}~${rule.ruleFieldOccurrence}`.replace(/^"|"$/g, ""));
 		} else {
-			titles.push(title);
+			titles.push(title.replace(/^"|"$/g, ""));
 		}
 	}
 
