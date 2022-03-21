@@ -124,7 +124,6 @@ queue.process(async (job) => {
 
 	console.log("Converting CSV to JSON");
 	const csvJSON = await CSVToJSON(csvText, rules);
-	job.progress(15);
 
 	// Validate columns
 	const isColumnsValid = await validateColumns(csvJSON, rules);
@@ -144,8 +143,6 @@ queue.process(async (job) => {
 		};
 	}
 
-	job.progress(30);
-
 	// Validate data
 	console.log("Beginning data validation");
 	console.log(
@@ -160,8 +157,6 @@ queue.process(async (job) => {
 	);
 
 	console.log("COMPLETE VALIDATION");
-
-	job.progress(80);
 
 	// Extract error counts
 	const { dataType, dependency, existence, rows } = errorCount;
@@ -208,8 +203,6 @@ queue.process(async (job) => {
 			projectName,
 			objectName
 		);
-
-		job.progress(99);
 
 		// Add output to bucket
 		const path = `${projectName} - ${rules[0].ruleObject} Output - ${day}.csv`;
@@ -263,8 +256,6 @@ queue.process(async (job) => {
 		};
 
 		await s3.putObject(params).promise();
-
-		job.progress(99);
 
 		return {
 			success: true,
