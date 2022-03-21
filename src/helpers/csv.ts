@@ -1,6 +1,5 @@
 import { Rule } from "../db/entity/Rule";
 import { parseAsync } from "json2csv";
-import csv from "csvtojson";
 
 const isStringNumeric = (str: string) => {
 	if (!str) return false;
@@ -24,65 +23,59 @@ export const CSVToJSON = async (
 	rules: Rule[],
 	delimiter = ",",
 	includeOccurence = true
-) => {
-	const csvJSON = await csv({ output: "json" }).fromString(data);
+): Promise<any> => {
+	// Extracts headers from CSV string
+	const titlesWithoutOccurrence = data
+		.slice(0, data.indexOf("\n"))
+		.split(delimiter)
+		.map((title) => title.split("\r")[0]);
 
-	console.log(csvJSON, "FKLSDFJKLSD");
+	const titles = [];
 
-	return csvJSON;
+	const fieldOccurrenceTracker = {};
 
-	// // Extracts headers from CSV string
-	// const titlesWithoutOccurrence = data
-	// 	.slice(0, data.indexOf("\n"))
-	// 	.split(delimiter)
-	// 	.map((title) => title.split("\r")[0]);
+	for await (const title of titlesWithoutOccurrence) {
+		if (fieldOccurrenceTracker[title] === undefined) {
+			fieldOccurrenceTracker[title] = 0;
+		} else {
+			fieldOccurrenceTracker[title] += 1;
+		}
 
-	// const titles = [];
+		const [rule] = rules.filter((rule) => {
+			return (
+				rule.ruleField === title &&
+				rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
+			);
+		});
 
-	// const fieldOccurrenceTracker = {};
+		// Get object Occurrence
+		if (!rule && includeOccurence) continue;
+		if (includeOccurence) {
+			titles.push(`${title}~${rule.ruleFieldOccurrence}`);
+		} else {
+			titles.push(title);
+		}
+	}
 
-	// for await (const title of titlesWithoutOccurrence) {
-	// 	if (fieldOccurrenceTracker[title] === undefined) {
-	// 		fieldOccurrenceTracker[title] = 0;
-	// 	} else {
-	// 		fieldOccurrenceTracker[title] += 1;
-	// 	}
+	return data
+		.slice(data.indexOf("\n") + 1)
+		.split("\n")
+		.map((v) => {
+			const values = v.split(',(?=(?:[^"]*"[^"]*")*[^"]*$)').map((value) => {
+				let string = value.split("\r")[0];
+				const isNum = isStringNumeric(string);
+				const bool = stringToBool(string);
 
-	// 	const [rule] = rules.filter((rule) => {
-	// 		return (
-	// 			rule.ruleField === title &&
-	// 			rule.ruleFieldOccurrence === fieldOccurrenceTracker[title]
-	// 		);
-	// 	});
-
-	// 	// Get object Occurrence
-	// 	if (!rule && includeOccurence) continue;
-	// 	if (includeOccurence) {
-	// 		titles.push(`${title}~${rule.ruleFieldOccurrence}`);
-	// 	} else {
-	// 		titles.push(title);
-	// 	}
-	// }
-
-	// return data
-	// 	.slice(data.indexOf("\n") + 1)
-	// 	.split("\n")
-	// 	.map((v) => {
-	// 		const values = v.split(delimiter).map((value) => {
-	// 			let string = value.split("\r")[0];
-	// 			const isNum = isStringNumeric(string);
-	// 			const bool = stringToBool(string);
-
-	// 			if (isNum) return Number(string);
-	// 			else if (typeof bool === "boolean") return bool;
-	// 			else return string;
-	// 		});
-	// 		const object = titles.reduce(
-	// 			(obj, title, index) => ((obj[title] = values[index]), obj),
-	// 			{}
-	// 		);
-	// 		return object;
-	// 	});
+				if (isNum) return Number(string);
+				else if (typeof bool === "boolean") return bool;
+				else return string;
+			});
+			const object = titles.reduce(
+				(obj, title, index) => ((obj[title] = values[index]), obj),
+				{}
+			);
+			return object;
+		});
 };
 
 export const JSONtoCSV = async (csvJSON: any[], customFields = {}) => {
