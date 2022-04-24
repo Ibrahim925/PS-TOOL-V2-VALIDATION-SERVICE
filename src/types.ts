@@ -1,5 +1,4 @@
 import { Request } from "express";
-import { Rule as RuleE } from "./db/entity/Rule";
 
 // Base custom request body
 export interface CustomRequest<P, B, Q> extends Request<P, {}, B, Q, {}> {
