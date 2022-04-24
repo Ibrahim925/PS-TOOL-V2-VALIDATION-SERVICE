@@ -4,7 +4,6 @@ import "dotenv/config";
 
 export let connection: Connection;
 
-// create connection
 createConnection({
 	type: "mysql",
 	host: process.env.dbHost,
@@ -13,11 +12,11 @@ createConnection({
 	password: process.env.dbPassword,
 	database: process.env.dbName,
 	synchronize: true,
-	entities: ["src/db/entity/**/*.ts"],
+	entities: ["build/db/entity/**/*.js"],
 	cli: {
-		entitiesDir: "src/db/entity",
-		migrationsDir: "src/db/migration",
-		subscribersDir: "src/db/subscriber",
+		entitiesDir: "build/db/entity",
+		migrationsDir: "build/db/migration",
+		subscribersDir: "build/db/subscriber",
 	},
 }).then((returnedConnection: Connection) => {
 	connection = returnedConnection;
